@@ -2,7 +2,6 @@ from djoser.serializers import (
     UserSerializer as BaseUserSerializer,
     UserCreateSerializer as BaseUserCreateSerializer,
 )
-from rest_framework import serializers
 
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -14,13 +13,10 @@ class UserCreateSerializer(BaseUserCreateSerializer):
             "email",
             "first_name",
             "last_name",
+            "phone",
+            "birth_date",
+            "profile_image",
         ]
-
-    def validate(self, attrs):
-        """
-        Make sure no one registers
-        """
-        raise serializers.ValidationError("Registration is closed.")
 
 
 class UserSerializer(BaseUserSerializer):
@@ -31,6 +27,9 @@ class UserSerializer(BaseUserSerializer):
             "email",
             "first_name",
             "last_name",
+            "phone",
+            "birth_date",
+            "profile_image",
         ]
 
 
