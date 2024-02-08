@@ -4,7 +4,6 @@ from rest_framework.permissions import BasePermission
 class IsOwnerOrReadOnly(BasePermission):
     """
     Custom permission to only allow owners of an object to edit , delete it.
-    If the user has not created the object they should not be able to retrieve it 
     """
 
     def has_object_permission(self, request, view, obj):
