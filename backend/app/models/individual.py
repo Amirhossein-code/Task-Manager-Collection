@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 class Individual(models.Model):
+    # User profile
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     first_name = models.CharField(max_length=255, null=True, blank=True)
