@@ -1,50 +1,14 @@
-from djoser.serializers import (
-    UserSerializer as BaseUserSerializer,
-    UserCreateSerializer as BaseUserCreateSerializer,
-)
+from .models import User
+from rest_framework import serializers
 
 
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
         fields = [
             "id",
-            "username",
+            "email",
             "password",
-            "email",
-            "first_name",
-            "last_name",
-            "phone",
-            "birth_date",
-            "profile_image",
         ]
-
-
-class UserSerializer(BaseUserSerializer):
-    class Meta(BaseUserSerializer.Meta):
-        fields = [
-            "id",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "phone",
-            "birth_date",
-            "profile_image",
-        ]
-
-
-class SecureUserSerializer(BaseUserSerializer):
-    class Meta(BaseUserSerializer.Meta):
-        fields = [
-            "username",
-            "first_name",
-            "last_name",
-        ]
-
-
-# Note for adding additional fields for user creation
-# we should not support fields outside the user model here like the fields in author model
-# but if that is the case and we want to we should do so in the front end
-# how? first post the details related to User model then additional fields in another post method
-# for adding fields here they need to be redefiened which is not a good practice
-# So we are going to pay the cost of sending 2 calls to the endpoint to have perfectly set up end points that do not interfere with each other

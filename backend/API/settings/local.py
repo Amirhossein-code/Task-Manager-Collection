@@ -9,14 +9,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-if os.getenv("DJANGO_SETTINGS_FILE") == "API.settings.local":
-    DATABASES = {
-        "default": {
-            "ENGINE": "mysql.connector.django",
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST_LOCAL"),
-            "PORT": os.environ.get("DB_PORT_LOCAL"),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "mysql.connector.django",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST_LOCAL"),
+        "PORT": os.environ.get("DB_PORT_LOCAL"),
     }
+}

@@ -1,1 +1,1 @@
-from .handlers import create_customer_for_new_user
+from .handlers import create_individual_profile_for_new_user
