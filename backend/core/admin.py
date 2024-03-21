@@ -1,28 +1,37 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin
 from .models import User
+from app.models import Customer
 
-# Register your models here.
+
+class CustomerInline(admin.StackedInline):
+    model = Customer
+    extra = 1
 
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    add_fieldsets = (
+class CustomUserAdmin(UserAdmin):
+    inlines = [CustomerInline]
+
+    list_display = ["email", "is_staff", "is_active"]
+    fieldsets = [
+        (None, {"fields": ["email", "password"]}),
+        ("Permissions", {"fields": ["is_staff", "is_active"]}),
+    ]
+    add_fieldsets = [
         (
             None,
             {
                 "classes": ("wide",),
-                "fields": (
-                    "username",
+                "fields": [
+                    "email",
                     "password1",
                     "password2",
-                    "email",
-                    "first_name",
-                    "last_name",
-                    "phone",
-                    "birth_date",
-                    "profile_image",
-                ),
+                    "is_staff",
+                    "is_active",
+                ],
             },
         ),
-    )
+    ]
+    search_fields = ["email"]
+    ordering = ["email"]

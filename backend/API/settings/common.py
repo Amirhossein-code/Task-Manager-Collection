@@ -16,7 +16,6 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
-    "djoser",
     "django_filters",
     "corsheaders",
     "debug_toolbar",
@@ -103,13 +102,6 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
-DJOSER = {
-    "REGISTER": False,
-    "SERIALIZERS": {
-        "user_create": "core.serializers.UserCreateSerializer",
-        "current_user": "core.serializers.UserSerializer",
-    },
-}
 
 AUTH_USER_MODEL = "core.User"
 
@@ -118,16 +110,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
 }
 
-# USE_I18N = True
-
-# LANGUAGE_CODE = "fa"
-
-# LANGUAGES = [
-#     ("fa", "Persian"),
-#     ("en", "English"),
-# ]
-
-# LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
