@@ -128,6 +128,5 @@ DEFAULT_FROM_EMAIL = "amir@gmail.com"
 
 ADMINS = [("Amir", "amir@gmail.com")]
 
-# Celey
-
-CELERY_BROKER_URL = "redis://localhost:6379/1"
+# Celery
+# CELERY_BROKER_URL = "redis://localhost:6379/1"

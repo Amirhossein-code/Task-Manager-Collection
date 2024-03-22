@@ -1,0 +1,11 @@
+1- Implement Celery 
+2- Implement Celery Beat 
+3- Configure celelery to send emails and Implement a Reminder system for tasks
+4- Implement Django Notifications 
+5- Cache backend 
+6- Docklerize
+
+Optional Features to be added:
+1-  Users can find eachother make it liek a social platform
+2-  enable Organization level Tasks and roles so individuals 
+    can assign each others tasks
