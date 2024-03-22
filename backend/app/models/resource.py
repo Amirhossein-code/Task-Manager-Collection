@@ -15,9 +15,9 @@ class Resource(models.Model):
         Task, on_delete=models.CASCADE, related_name="task_resource"
     )
     title = models.CharField(max_length=255)
-    description = models.TextField(max_length=True)
+    description = models.TextField(max_length=True, null=True, blank=True)
     resource_file = models.FileField(upload_to="app/resources/", null=True, blank=True)
-    
+
     # Charfield intentionallty used instead of Url field
     resource_url = models.CharField(max_length=555, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -3,13 +3,13 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import Category
 from ..serializers import CategorySerializer
-from ..permissions import IsOwner
+from ..permissions import IsObjectOwner
 from ..filters import CategoryFilter
 
 
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsObjectOwner]
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = CategoryFilter

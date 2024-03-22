@@ -12,5 +12,10 @@ task_router = routers.NestedDefaultRouter(router, "tasks", lookup="task")
 task_router.register(
     "prequisites", views.PrequisiteViewSet, basename="task-prerequisites"
 )
+task_router.register(
+    "resources",
+    views.ResourceViewSet,
+    basename="task-resources",
+)
 
 urlpatterns = router.urls + task_router.urls

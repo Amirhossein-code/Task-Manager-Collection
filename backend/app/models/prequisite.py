@@ -4,7 +4,9 @@ from .task import Task
 
 class Prequisite(models.Model):
     # Used for defining what need to be done beforehand for the task
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="task")
+    task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, related_name="task_prequisite"
+    )
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     completed = models.BooleanField(default=False)

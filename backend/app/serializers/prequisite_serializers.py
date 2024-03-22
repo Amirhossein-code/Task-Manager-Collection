@@ -3,6 +3,7 @@ from ..models import Prequisite
 
 
 class PrequisiteSerialzier(serializers.ModelSerializer):
+
     class Meta:
         model = Prequisite
         fields = [
@@ -16,7 +17,7 @@ class PrequisiteSerialzier(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
-            "task",  # ?
+            "task",
             "created_at",
             "last_updated",
         ]
@@ -24,7 +25,7 @@ class PrequisiteSerialzier(serializers.ModelSerializer):
     def create(self, validated_data):
         task_id = self.context["task_id"]
         if task_id is None:
-            raise serializers.ValidationError("book slug is required in the context")
+            raise serializers.ValidationError("Task ID is required in the context")
 
         validated_data["task_id"] = task_id
         return super().create(validated_data)

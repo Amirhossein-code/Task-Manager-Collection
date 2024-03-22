@@ -37,6 +37,10 @@ class TaskSerializer(serializers.ModelSerializer):
             "description",
             "priority",
             "status",
+            "category",
+            "start_time",
+            "finish_time",
+            "archived",
         ]
         read_only_fields = [
             "id",
@@ -59,3 +63,8 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
         ]
+
+
+# 1@gmail.com
+
+# LLL909055
