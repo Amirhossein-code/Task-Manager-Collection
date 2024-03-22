@@ -1,3 +1,3 @@
 from .object_permission import IsObjectOwner
-from .prequisite_permission import IsOwnerOfPrequisite
+from .task_foreign_models_permission import IsOwnerOfTaskForeignModels
 from .profile_permission import IsOwner

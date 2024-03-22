@@ -2,17 +2,17 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from ..models import Prequisite
 from ..serializers import PrequisiteSerialzier
-from ..permissions import IsOwnerOfPrequisite
+from ..permissions import IsOwnerOfTaskForeignModels
 
 
 class PrequisiteViewSet(ModelViewSet):
     serializer_class = PrequisiteSerialzier
-    permission_classes = [IsOwnerOfPrequisite]
+    permission_classes = [IsAuthenticated, IsOwnerOfTaskForeignModels]
 
     def get_queryset(self):
         return Prequisite.objects.filter(
             task__id=self.kwargs["task_pk"],
-            # task__individual=self.request.user.individual,
+            task__individual=self.request.user.individual,
         ).all()
 
     def get_serializer_context(self):

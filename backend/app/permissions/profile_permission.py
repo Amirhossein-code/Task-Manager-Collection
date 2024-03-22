@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission
 class IsOwner(BasePermission):
     """
     Custom permission so that only the user who created the object can delete or update the object
-    Used for the profile
+    Used for the user profile
     """
 
     def has_object_permission(self, request, view, obj):
