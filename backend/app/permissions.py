@@ -1,16 +1,19 @@
 from rest_framework.permissions import BasePermission
 
 
-class IsOwnerOrReadOnly(BasePermission):
+class IsOwner(BasePermission):
     """
-    Custom permission to only allow owners of an object to edit , delete it.
+    Custom permission so that only the user who created the object can delete or update the object
     """
 
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD, or OPTIONS requests.
+        # Check if the request method is safe (GET, HEAD, OPTIONS)
         if request.method in ["GET", "HEAD", "OPTIONS"]:
             return True
 
-        # Instance must have an attribute named `user` (the creator of the task).
-        return obj.user == request.user
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            # Ensure that only the user who created the object can delete or update it
+            return obj.id == request.user.individual.id
+
+        return False

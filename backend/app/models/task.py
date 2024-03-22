@@ -1,7 +1,39 @@
 from django.db import models
 from .individual import Individual
 from .category import Category
-# from .prequisite import Prequisite
+
+
+class Prequisite(models.Model):
+    # Used for defining what need to be done beforehand for the task
+    task = models.ForeignKey(
+        "Task", on_delete=models.CASCADE, related_name="task_prequisite"
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    """
+    # If we want to make prequisites Ordered so users can not move from the first uncompleted prequisite 
+    # to mark the second one completed we can add this to the model and update the respective logic
+    
+    order = models.PositiveIntegerField()  
+
+    class Meta:
+        ordering = ["order"]
+
+    def save(self, *args, **kwargs):
+        if self.order > 1:
+            previous_prerequisite = Prequisite.objects.filter(
+                task=self.task, order=self.order - 1
+            ).first()
+            if previous_prerequisite and not previous_prerequisite.completed:
+                raise ValueError(
+                    "Cannot set this prerequisite to True until the previous one is completed."
+                )
+        super(Prequisite, self).save(*args, **kwargs)
+    """
 
 
 class Task(models.Model):
@@ -47,41 +79,32 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    # def mark_all_prerequisites_completed(self):
-    #     prerequisites = Prequisite.objects.filter(task=self)
-    #     prerequisites.update(completed=True)
-    #     for prerequisite in prerequisites:
-    #         prerequisite.completed = True
-    #         prerequisite.save()
-    #     if prerequisites.filter(completed=False).exists() == False:
-    #         self.completed = True
-    #         self.save()
+    def mark_all_prerequisites_completed(self):
+        try:
+            prerequisites = Prequisite.objects.filter(task=self)
+        except Prequisite.DoesNotExist:
+            # exit the function sicne there are no prequisites
+            # associated with the respective Task
+            return
 
-    # def mark_all_prerequisites_completed(self):
-    #     try:
-    #         prerequisites = Prequisite.objects.filter(task=self)
-    #     except Prequisite.DoesNotExist:
-    #         # exit the function sicne there are no prequisites
-    #         # associated with the respective Task
-    #         return
+        prerequisites.update(completed=True)
 
-    #     prerequisites.update(completed=True)
+        if prerequisites.filter(completed=False).exists():
+            return
 
-    #     if prerequisites.filter(completed=False).exists():
-    #         return
-
-    #     self.completed = True
-    #     self.save()
+        self.completed = True
+        self.save()
 
     def save(self, *args, **kwargs):
-        if self.completed:
-            # uncompleted_prerequisites = Prequisite.objects.filter(
-            #     task=self, completed=False
-            # )
-            # if uncompleted_prerequisites.exists():
-            #     raise ValueError(
-            #         "Cannot mark this task as completed until all prerequisites are completed."
-            #     )
-            if not self.archived:
-                self.archived = True
+        if self.pk:  # Check if the instance already exists in the database
+            if self.status == self.COMPLETED:
+                uncompleted_prerequisites = Prequisite.objects.filter(
+                    task=self, completed=False
+                )
+                if uncompleted_prerequisites.exists():
+                    raise ValueError(
+                        "Cannot mark this task as completed until all prerequisites are completed."
+                    )
+                if not self.archived:
+                    self.archived = True
         super(Task, self).save(*args, **kwargs)

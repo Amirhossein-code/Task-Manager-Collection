@@ -7,14 +7,6 @@ class TaskFilter(django_filters.FilterSet):
         model = Task
         fields = {
             "title": ["exact"],
-            "category": ["exact"],
-            "category__title": ["icontains"],
-            # "due_date": [
-            #     "exact",
-            #     "gte",
-            #     "lte",
-            # ],  # exact, greater than or equal, less than or equal
-            "priority": ["exact"],
         }
 
 

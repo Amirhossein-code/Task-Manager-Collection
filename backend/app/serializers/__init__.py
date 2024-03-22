@@ -1,4 +1,8 @@
-from .task_serializers import TaskSerializer, DetailedTaskSerializer
+from .task_serializers import (
+    TaskSerializer,
+    DetailedTaskSerializer,
+    CreateTaskSerializer,
+)
 from .category_serializers import CategorySerializer
 from .resource_serializer import ResourceSerializer
 from .prequisite_serializers import PrequisiteSerialzier

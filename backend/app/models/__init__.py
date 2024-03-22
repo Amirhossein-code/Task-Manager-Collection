@@ -1,5 +1,4 @@
-from .task import Task
+from .task import Task, Prequisite
 from .category import Category
 from .individual import Individual
-from .prequisite import Prequisite
 from .resource import Resource

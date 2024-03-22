@@ -3,16 +3,16 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import Category
 from ..serializers import CategorySerializer
-from ..permissions import IsOwnerOrReadOnly
-from ..filters import TaskFilter
+from ..permissions import IsOwner
+from ..filters import CategoryFilter
 
 
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     filter_backends = [DjangoFilterBackend]
-    filterset_class = TaskFilter
+    filterset_class = CategoryFilter
 
     def get_queryset(self):
         return Category.objects.filter(individual=self.request.user.individual).all()

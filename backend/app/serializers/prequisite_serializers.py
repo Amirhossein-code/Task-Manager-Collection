@@ -20,3 +20,11 @@ class PrequisiteSerialzier(serializers.ModelSerializer):
             "created_at",
             "last_updated",
         ]
+
+    def create(self, validated_data):
+        task_id = self.context["task_id"]
+        if task_id is None:
+            raise serializers.ValidationError("book slug is required in the context")
+
+        validated_data["task_id"] = task_id
+        return super().create(validated_data)
