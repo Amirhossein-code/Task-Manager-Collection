@@ -24,6 +24,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "app",
+    "common",
     "core",
 ]
 
@@ -94,6 +95,7 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+# Authentication
 REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -110,7 +112,22 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
 }
 
-
+# CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+
+# EMail Backend
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "localhost"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_PORT = 2525
+DEFAULT_FROM_EMAIL = "amir@gmail.com"
+
+ADMINS = [("Amir", "amir@gmail.com")]
+
+# Celey
+
+CELERY_BROKER_URL = "redis://localhost:6379/1"

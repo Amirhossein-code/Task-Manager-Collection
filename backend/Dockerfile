@@ -6,9 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Update pip and install gettext
-RUN pip install --upgrade pip && \
-    apt-get update && \
-    apt-get install -y gettext
+RUN apt-get update && \
+    apt-get install -y gettext \
+    pip install --upgrade pip && 
 
 # Set the working directory
 WORKDIR /app
