@@ -9,11 +9,23 @@ class DetailedTaskSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
-            "due_date",
+            "individual",
+            "start_time",
+            "finish_time",
             "priority",
-            "user",
+            "status",
+            "category",
+            "image",
+            "archived",
+            "created_at",
+            "last_updated",
         ]
-        read_only_fields = ["user"]
+        read_only_fields = [
+            "id",
+            "individual",
+            "created_at",
+            "last_updated",
+        ]
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -23,6 +35,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
-            "due_date",
             "priority",
+            "status",
+        ]
+        read_only_fields = [
+            "id",
         ]

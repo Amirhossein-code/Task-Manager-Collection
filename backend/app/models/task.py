@@ -1,5 +1,7 @@
 from django.db import models
-from ..models import Category, Prequisite, Individual
+from .individual import Individual
+from .category import Category
+# from .prequisite import Prequisite
 
 
 class Task(models.Model):
@@ -38,7 +40,7 @@ class Task(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True
     )
-    image = models.ImageField(upload_to="/app/task", null=True, blank=True)
+    image = models.ImageField(upload_to="app/task/", null=True, blank=True)
 
     archived = models.BooleanField(default=False)
 
@@ -55,31 +57,31 @@ class Task(models.Model):
     #         self.completed = True
     #         self.save()
 
-    def mark_all_prerequisites_completed(self):
-        try:
-            prerequisites = Prequisite.objects.filter(task=self)
-        except Prequisite.DoesNotExist:
-            # exit the function sicne there are no prequisites
-            # associated with the respective Task
-            return
+    # def mark_all_prerequisites_completed(self):
+    #     try:
+    #         prerequisites = Prequisite.objects.filter(task=self)
+    #     except Prequisite.DoesNotExist:
+    #         # exit the function sicne there are no prequisites
+    #         # associated with the respective Task
+    #         return
 
-        prerequisites.update(completed=True)
+    #     prerequisites.update(completed=True)
 
-        if prerequisites.filter(completed=False).exists():
-            return
+    #     if prerequisites.filter(completed=False).exists():
+    #         return
 
-        self.completed = True
-        self.save()
+    #     self.completed = True
+    #     self.save()
 
     def save(self, *args, **kwargs):
         if self.completed:
-            uncompleted_prerequisites = Prequisite.objects.filter(
-                task=self, completed=False
-            )
-            if uncompleted_prerequisites.exists():
-                raise ValueError(
-                    "Cannot mark this task as completed until all prerequisites are completed."
-                )
+            # uncompleted_prerequisites = Prequisite.objects.filter(
+            #     task=self, completed=False
+            # )
+            # if uncompleted_prerequisites.exists():
+            #     raise ValueError(
+            #         "Cannot mark this task as completed until all prerequisites are completed."
+            #     )
             if not self.archived:
                 self.archived = True
         super(Task, self).save(*args, **kwargs)

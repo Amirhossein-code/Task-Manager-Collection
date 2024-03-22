@@ -7,7 +7,7 @@ class Prequisite(models.Model):
     task = models.ForeignKey(
         Task, on_delete=models.CASCADE, related_name="task_prequisite"
     )
-    title = models.CharField(max_length=True)
+    title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

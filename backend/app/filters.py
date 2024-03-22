@@ -9,11 +9,11 @@ class TaskFilter(django_filters.FilterSet):
             "title": ["exact"],
             "category": ["exact"],
             "category__title": ["icontains"],
-            "due_date": [
-                "exact",
-                "gte",
-                "lte",
-            ],  # exact, greater than or equal, less than or equal
+            # "due_date": [
+            #     "exact",
+            #     "gte",
+            #     "lte",
+            # ],  # exact, greater than or equal, less than or equal
             "priority": ["exact"],
         }
 

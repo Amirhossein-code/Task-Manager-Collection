@@ -10,15 +10,12 @@ from ..filters import CategoryFilter
 class TaskViewSet(ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
     filter_backends = [DjangoFilterBackend]
     filterset_class = CategoryFilter
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_staff:  # Check if the user is an admin
-            return Task.objects.all()
-        else:
-            return Task.objects.filter(user=user).all()
+        return Task.objects.filter(individual=self.request.user.individual).all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(individual=self.request.user.individual)
