@@ -130,3 +130,5 @@ ADMINS = [("Amir", "amir@gmail.com")]
 
 # Celery
 # CELERY_BROKER_URL = "redis://localhost:6379/1"
+
+FRONTEND_URL = "http://localhost"
