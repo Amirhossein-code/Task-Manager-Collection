@@ -39,5 +39,12 @@ services:
     ports:
       - "5173:5173"
 
+  smtp4dev:
+    image: rnwood/smtp4dev
+    container_name: smtp4dev
+    ports:
+      - "3000:80"
+      - "2525:25"
+      
 volumes:
   data:

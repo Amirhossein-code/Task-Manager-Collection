@@ -9,7 +9,7 @@ urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register"),
     path(
         "reset-password/",
-        views.PasswordResetRequestView.as_view(),
+        views.RequestPasswordResetView.as_view(),
         name="reset-password",
     ),
     path(

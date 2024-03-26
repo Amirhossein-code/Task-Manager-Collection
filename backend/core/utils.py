@@ -11,3 +11,4 @@ def send_reset_password_email(email, token):
         [email],
         fail_silently=False,
     )
+
