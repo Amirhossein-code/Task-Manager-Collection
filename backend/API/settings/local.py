@@ -7,15 +7,16 @@ SECRET_KEY = "django-insecure-t4p&6eg-pcu_f938b3gtp6yi4o#e=gz-)0$kw@%$n%n$n^^s)$
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 DATABASES = {
     "default": {
-        "ENGINE": "mysql.connector.django",
-        "NAME": os.environ.get("DB_NAME"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
-        "HOST": os.environ.get("DB_HOST_LOCAL"),
-        "PORT": os.environ.get("DB_PORT_LOCAL"),
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
+
+ALLOWED_HOSTS = []

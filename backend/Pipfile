@@ -8,15 +8,15 @@ django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 drf-nested-routers = "*"
+psycopg2 = "*"
 django-autoslug = "*"
 pillow = "*"
-mysql-connector-python = "*"
-django-debug-toolbar = "*"
 django-filter = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
 whitenoise = "*"
 gunicorn = "*"
+django-debug-toolbar = "*"
 
 [dev-packages]
 
