@@ -1,17 +1,5 @@
-from .models import User
+from ..models import user
 from rest_framework import serializers
-
-
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "email",
-            "password",
-        ]
 
 
 class RequestPasswordResetSerializer(serializers.Serializer):

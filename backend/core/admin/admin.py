@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from ..models import user
 from app.models import Individual
 
 
@@ -9,7 +9,7 @@ class IndividualInline(admin.StackedInline):
     extra = 1
 
 
-@admin.register(User)
+@admin.register(user)
 class CustomUserAdmin(UserAdmin):
     inlines = [IndividualInline]
 

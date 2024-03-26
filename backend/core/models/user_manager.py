@@ -1,8 +1,4 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db import models
-from uuid import uuid4
-from django.utils import timezone
-from datetime import timedelta
+from django.contrib.auth.models import BaseUserManager
 
 
 class CustomUserManager(BaseUserManager):
@@ -26,33 +22,3 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
-
-
-class User(AbstractUser):
-    email = models.EmailField(max_length=100, unique=True)
-    username = None
-    first_name = None
-    last_name = None
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-
-    objects = CustomUserManager()
-
-
-class PasswordResetToken(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    token = models.UUIDField(default=uuid4, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
-
-    def save(self, *args, **kwargs):
-        self.expires_at = timezone.now() + timedelta(minutes=10)
-        super(PasswordResetToken, self).save(*args, **kwargs)
-
-
-"""
-{
-    "email": "12@gmail.com"
-}
-"""
