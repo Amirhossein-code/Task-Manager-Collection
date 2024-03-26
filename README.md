@@ -21,3 +21,7 @@ The Task Manager employs a customized authentication backend that supports email
 The Task Manager offers comprehensive task management features, including the ability to define prerequisites and allocate resources. These features are designed to enhance task handling and improve overall efficiency.
 
 By leveraging these features, users can effectively organize and manage their tasks, ensuring smooth progress and successful completion of their projects.
+
+## Tech Stack Used 
+Backend: Python, Django, Django Rest Framework, 
+
