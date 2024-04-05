@@ -15,7 +15,10 @@ class RegisterView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        return Response("User registered successfully", status=status.HTTP_201_CREATED)
+        user = serializer.instance  # Get the newly created user instance
+        serialized_user = UserSerializer(user)  # Serialize the user instance
+
+        return Response(serialized_user.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         user = serializer.save()
