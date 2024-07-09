@@ -28,16 +28,16 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react
-    restart: always
-    volumes:
-      - ./frontend:/app
-    ports:
-      - "5173:5173"
+  # frontend:
+  #   build: 
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: react
+  #   restart: always
+  #   volumes:
+  #     - ./frontend:/app
+  #   ports:
+  #     - "5173:5173"
 
   smtp4dev:
     image: rnwood/smtp4dev
