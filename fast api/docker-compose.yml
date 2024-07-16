@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: fastapiapp_demodb
+    restart: always
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    networks:
+      - fastapiappnetwork
+
+  app:
+    build: .
+    container_name: fastapiapp_demoapp
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/home
+    depends_on:
+      - db
+    networks:
+      - fastapiappnetwork
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_HOST=$POSTGRES_HOST
+      - POSTGRES_PORT=$POSTGRES_PORT
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    networks:
+      - fastapiappnetwork
+
+networks:
+  fastapiappnetwork:
