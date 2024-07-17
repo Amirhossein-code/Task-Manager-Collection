@@ -12,3 +12,8 @@ class UserCreate(BaseUser):
 
 class UserDisplay(BaseUser):
     email: EmailStr
+
+
+class UserValidate(BaseModel):
+    email: EmailStr
+    password: str
