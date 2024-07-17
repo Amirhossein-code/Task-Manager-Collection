@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from . import schemas, crud
-
+from ..auth import get_current_user
 
 router = APIRouter(
     prefix="/users",
@@ -22,10 +22,3 @@ def sign_up(request: schemas.UserCreate, db: Session = Depends(get_db)):
     new_user = crud.create_new_user(request, db)
 
     return new_user
-
-
-@router.get(
-    "/me",
-)
-def get_logged_in_user():
-    return "Iam Logged in User"
