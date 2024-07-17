@@ -1,12 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
-class User(BaseModel):
-    username: str
-    email: str | None = None
+class BaseUser(BaseModel):
     full_name: str | None = None
-    disabled: bool | None = None
 
 
-class UserInDB(User):
-    hashed_password: str
+class UserCreate(BaseUser):
+    email: EmailStr
+    password: str
+
+
+class UserDisplay(BaseUser):
+    email: EmailStr

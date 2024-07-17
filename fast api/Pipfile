@@ -9,10 +9,10 @@ uvicorn = "*"
 sqlalchemy = "*"
 alembic = "*"
 python-dotenv = "*"
-passlib = "*"
 pyjwt = "*"
 psycopg2-binary = "*"
 email-validator = "*"
-bcrypt = "*"
+bcrypt = "4.0.1"
+passlib = "*"
 
 [dev-packages]
