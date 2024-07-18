@@ -13,7 +13,7 @@ class UserDisplay(BaseModel):
     full_name: str | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserValidate(BaseModel):
@@ -23,7 +23,6 @@ class UserValidate(BaseModel):
 
 class UserUpdate(BaseModel):
     full_name: str = None
-    is_active: bool = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

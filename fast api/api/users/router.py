@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status ,Response
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from . import schemas, crud
-from ..auth import get_current_user
 
 router = APIRouter(
     prefix="/users",
@@ -10,7 +9,9 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=schemas.UserDisplay)
+@router.post(
+    "/", response_model=schemas.UserDisplay, status_code=status.HTTP_201_CREATED
+)
 def sign_up(request: schemas.UserCreate, db: Session = Depends(get_db)):
     user = crud.get_user_by_email(request.email, db)
     if user:
@@ -20,45 +21,30 @@ def sign_up(request: schemas.UserCreate, db: Session = Depends(get_db)):
         )
 
     new_user = crud.create_new_user(request, db)
-
     return new_user
 
 
-@router.get("/me", response_model=schemas.UserDisplay)
+@router.get("/me", response_model=schemas.UserDisplay, status_code=status.HTTP_200_OK)
 def get_logged_in_user(
-    current_user: schemas.UserValidate = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    user: schemas.UserDisplay = Depends(crud.get_current_user_db),
 ):
-    user = crud.get_user_by_email(current_user.email, db)
     return user
 
 
-@router.put("/me", response_model=schemas.UserDisplay)
+@router.put("/me", response_model=schemas.UserDisplay, status_code=status.HTTP_200_OK)
 def edit_logged_in_user_data(
     user_update: schemas.UserUpdate,
-    current_user: schemas.UserValidate = Depends(get_current_user),
+    user: schemas.UserDisplay = Depends(crud.get_current_user_db),
     db: Session = Depends(get_db),
 ):
-    user = crud.get_user_by_email(current_user.email, db)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
-
     updated_user = crud.update_user(user, user_update, db)
     return updated_user
 
 
-@router.delete("/me")
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 def delete_logged_in_user(
-    current_user: schemas.UserValidate = Depends(get_current_user),
+    user: schemas.UserDisplay = Depends(crud.get_current_user_db),
     db: Session = Depends(get_db),
 ):
-    user = crud.get_user_by_email(current_user.email, db)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
     crud.delete_user(user, db)
-
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return {"message": "User Deleted Successfully"}

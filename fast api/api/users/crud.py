@@ -1,3 +1,6 @@
+from fastapi import HTTPException, status, Depends
+from ..database import get_db
+from ..auth.oauth2 import get_current_user
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .hashing import Hash
@@ -32,3 +35,20 @@ def delete_user(user: models.User, db: Session):
     db.delete(user)
     db.commit()
     return user
+
+
+def get_user_or_404(email: str, db: Session):
+    user = get_user_by_email(email, db)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+    return user
+
+
+# Dependency to get the current user from the database
+def get_current_user_db(
+    current_user: schemas.UserValidate = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return get_user_or_404(current_user.email, db)
