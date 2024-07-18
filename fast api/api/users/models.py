@@ -1,12 +1,11 @@
 from ..database import Base
-
+from sqlalchemy.orm import relationship
 from sqlalchemy import (
     Column,
     String,
     Integer,
     Boolean,
     UniqueConstraint,
-    PrimaryKeyConstraint,
 )
 
 
@@ -20,4 +19,8 @@ class User(Base):
     is_active = Column(Boolean, default=False)
 
     UniqueConstraint("email", name="uq_user_email")
-    PrimaryKeyConstraint("id", name="pk_user_id")
+
+    tasks = relationship("Task", back_populates="owner")
+
+    def __repr__(self):
+        return f"<User: {self.full_name}>"
