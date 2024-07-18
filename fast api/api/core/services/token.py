@@ -2,10 +2,10 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-from ..users import models
-from ..users.hashing import Hash
-from ..settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from .schemas import TokenData
+from .. import models
+from .hashing import Hash
+from ...settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from ..schemas.token import TokenData
 
 
 def authenticate_user(db: Session, email: str, password: str):
