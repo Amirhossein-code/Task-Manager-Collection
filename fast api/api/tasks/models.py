@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from ..database import Base
+from sqlalchemy.sql import func
 import enum
 
 
@@ -18,17 +18,15 @@ class Task(Base):
     title = Column(String(225), nullable=False)
     description = Column(String, nullable=True)
     status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING)
+
     start_time = Column(DateTime, nullable=False)
     finish_time = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(), nullable=False)
-    last_updated = Column(
-        DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False
-    )
+
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    # Relationship to the User model
     owner = relationship("User", back_populates="tasks")
 
     def __repr__(self):
-        return f"<User: {self.full_name}>"
+        return f"<Task(title='{self.title}', status='{self.status.name}', owner_id={self.owner_id})>"
