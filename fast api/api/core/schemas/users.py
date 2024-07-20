@@ -1,16 +1,18 @@
 from pydantic import BaseModel, EmailStr
+from ..services.password_validators import ValidatedPassword
 
 
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
+class UserBase(BaseModel):
     full_name: str | None = None
 
 
-class UserDisplay(BaseModel):
-    id: int
+class UserCreate(UserBase):
     email: EmailStr
-    full_name: str | None = None
+    password: ValidatedPassword
+
+
+class UserDisplay(UserBase):
+    email: EmailStr
 
     class Config:
         from_attributes = True
@@ -18,11 +20,9 @@ class UserDisplay(BaseModel):
 
 class UserValidate(BaseModel):
     email: EmailStr
-    password: str
+    password: ValidatedPassword
 
 
-class UserUpdate(BaseModel):
-    full_name: str = None
-
+class UserUpdate(UserBase):
     class Config:
         from_attributes = True
