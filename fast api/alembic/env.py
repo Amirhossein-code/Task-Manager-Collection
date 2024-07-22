@@ -4,7 +4,8 @@ from sqlalchemy import pool
 from alembic import context
 from api.database import Base, DATABASE_URL
 
-from api.core.models import User
+from api.core.models.users import User
+from api.tasks.models import Task
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
