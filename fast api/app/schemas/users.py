@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from ..utils import ValidatedPassword
+from ..utils.auth.password_validators import ValidatedPassword
 
 
 class UserBase(BaseModel):

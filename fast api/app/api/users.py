@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ...database import get_db
-from ..schemas.users import users as user_schemas
-from ..services import UserCrud
-from ..utils import get_current_user_db_dependency
+from ..core.database import get_db
+from ..schemas import users as user_schemas
+from ..utils.db import users as user_crud
+from ..dependencies.current_user import get_current_user_db_dependency
 
 router = APIRouter(
     prefix="/users",
@@ -15,14 +15,14 @@ router = APIRouter(
     "/", response_model=user_schemas.UserDisplay, status_code=status.HTTP_201_CREATED
 )
 def sign_up(request: user_schemas.UserCreate, db: Session = Depends(get_db)):
-    user = UserCrud.get_user_by_email(request.email, db)
+    user = user_crud.get_user_by_email(request.email, db)
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User already exists!",
         )
 
-    new_user = UserCrud.create_new_user(request, db)
+    new_user = user_crud.create_new_user(request, db)
     return new_user
 
 
@@ -43,7 +43,7 @@ def edit_logged_in_user_data(
     user: user_schemas.UserDisplay = Depends(get_current_user_db_dependency),
     db: Session = Depends(get_db),
 ):
-    updated_user = UserCrud.update_user(user, user_update, db)
+    updated_user = user_crud.update_user(user, user_update, db)
     return updated_user
 
 
@@ -52,5 +52,5 @@ def delete_logged_in_user(
     user: user_schemas.UserDisplay = Depends(get_current_user_db_dependency),
     db: Session = Depends(get_db),
 ):
-    UserCrud.delete_user(user, db)
+    user_crud.delete_user(user, db)
     return {"message": "User Deleted Successfully"}

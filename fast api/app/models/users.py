@@ -1,12 +1,12 @@
-from ...database import Base
-from sqlalchemy.orm import relationship
+from ..core.database import Base
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
     Boolean,
+    Column,
+    Integer,
+    String,
     UniqueConstraint,
 )
+from sqlalchemy.orm import relationship
 
 
 class User(Base):

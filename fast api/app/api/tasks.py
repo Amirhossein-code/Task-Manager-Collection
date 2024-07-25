@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
 
 router = APIRouter(
-    prefix="tasks",
+    prefix="/tasks",
     tags=["tasks"],
 )
 
