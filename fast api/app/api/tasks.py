@@ -2,8 +2,9 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 from ..core.database import get_db
 from ..schemas import tasks as task_schemas
-from ..models import User, Task
+from ..models import User
 from ..dependencies.current_user import get_current_user_db_dependency
+from ..utils.db import tasks as task_crud
 
 router = APIRouter(
     prefix="/tasks",
@@ -17,15 +18,16 @@ def create_task(
     current_user: User = Depends(get_current_user_db_dependency),
     db: Session = Depends(get_db),
 ):
-    # Create a new task instance
-    new_task = Task(
-        title=task.title,
-        description=task.description,
-        status=task.status,
-        owner_id=current_user.id,
+    new_task = task_crud.create_new_task(
+        task_data=task,
+        current_user=current_user,
+        db=db,
     )
-    # Add and commit the new task to the database
-    db.add(new_task)
-    db.commit()
-    db.refresh(new_task)
     return new_task
+
+
+# {
+#   "full_name": "string",
+#   "email": "user2@example.com",
+#   "password": "Hello123@World"
+# }
