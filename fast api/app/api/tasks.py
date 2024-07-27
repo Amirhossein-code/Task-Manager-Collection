@@ -1,9 +1,12 @@
-from fastapi import APIRouter, status, Depends
+from typing import List
+
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
+
 from ..core.database import get_db
-from ..schemas import tasks as task_schemas
-from ..models import User
 from ..dependencies.current_user import get_current_user_db_dependency
+from ..models import Task, User
+from ..schemas import tasks as task_schemas
 from ..utils.db import tasks as task_crud
 
 router = APIRouter(
@@ -24,6 +27,18 @@ def create_task(
         db=db,
     )
     return new_task
+
+
+@router.get("/", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK)
+def get_users_tasks(
+    current_user: User = Depends(get_current_user_db_dependency),
+    db: Session = Depends(get_db),
+):
+    tasks = task_crud.get_user_tasks(
+        current_user=current_user,
+        db=db,
+    )
+    return tasks
 
 
 # {
