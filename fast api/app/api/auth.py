@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..schemas import token as token_schema
 from ..utils.auth import token as token_utils
+from ..utils.db import users as user_crud
 
 router = APIRouter(
     prefix="/auth",
@@ -16,7 +17,7 @@ router = APIRouter(
 def login_for_access_token(
     request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
-    user = token_utils.authenticate_user(db, request.username, request.password)
+    user = user_crud.authenticate_user(db, request.username, request.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -28,4 +29,4 @@ def login_for_access_token(
             "sub": user.email,
         }
     )
-    return token_schema(access_token=access_token, token_type="bearer")
+    return token_schema.Token(access_token=access_token, token_type="bearer")

@@ -42,16 +42,9 @@ def update_user(user: User, user_update: user_schemas.UserUpdate, db: Session):
 
 
 def delete_user(user: User, db: Session):
-    try:
-        db.delete(user)
-        db.commit()
-        return {"message": "User deleted successfully"}
-    except Exception:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while deleting the user",
-        )
+    db.delete(user)
+    db.commit()
+    return {"message": "User deleted successfully"}
 
 
 ################################## Auth ##################################

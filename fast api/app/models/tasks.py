@@ -20,8 +20,8 @@ class Task(Base):
     description = Column(String, nullable=True)
     status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING)
 
-    start_time = Column(DateTime, nullable=False)
-    finish_time = Column(DateTime, nullable=True)
+    # start_time = Column(DateTime, nullable=False)
+    # finish_time = Column(DateTime, nullable=True)
 
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())

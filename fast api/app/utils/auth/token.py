@@ -5,7 +5,7 @@ from ...core.settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 from fastapi import HTTPException, status
 from jwt.exceptions import InvalidTokenError
 
-from ...schemas import token
+from ...schemas import token as token_schema
 
 
 def create_access_token(data: dict) -> str:
@@ -18,7 +18,7 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-def verify_token(token: str) -> token.TokenData:
+def verify_token(token: str) -> token_schema.TokenData:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -29,7 +29,7 @@ def verify_token(token: str) -> token.TokenData:
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        token_data = token.TokenData(email=email)
+        token_data = token_schema.TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
 
