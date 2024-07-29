@@ -8,12 +8,15 @@ class Task(BaseModel):
     title: str
     description: str | None = None
     status: TaskStatus
-    time_created: datetime
-    time_updated: datetime | None = None
-    owner_id: int
 
     class Config:
         from_attributes = True
+
+
+class TaskDetail(Task):
+    time_created: datetime
+    time_updated: datetime | None = None
+    owner_id: int
 
 
 class TaskCreate(BaseModel):
