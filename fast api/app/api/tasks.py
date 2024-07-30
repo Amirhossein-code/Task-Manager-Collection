@@ -39,16 +39,16 @@ def get_users_tasks(
     current_user: User = Depends(get_current_user_db_dependency),
     db: Session = Depends(get_db),
 ):
-    tasks = task_crud.get_user_tasks(
+    tasks = task_crud.get_user_tasks_or_404(
         current_user=current_user,
         db=db,
     )
-    if tasks is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
     return tasks
 
 
-@router.get("/{task_id}", response_model=task_schemas.Task)
+@router.get(
+    "/{task_id}", response_model=task_schemas.Task, status_code=status.HTTP_200_OK
+)
 def get_task_by_id(
     task_id: int,
     user: User = Depends(get_current_user_db_dependency),
@@ -61,6 +61,29 @@ def get_task_by_id(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
         )
     return task
+
+
+@router.put(
+    "/{task_id}", response_model=task_schemas.Task, status_code=status.HTTP_200_OK
+)
+def update_task(
+    task_id: int,
+    task_data: task_schemas.TaskUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_db_dependency),
+):
+    task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+
+    # Check user permissions
+    if task.owner_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this task",
+        )
+
+    updated_task = task_crud.update_task(task=task, task_data=task_data, db=db)
+
+    return updated_task
 
 
 # {

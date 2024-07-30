@@ -78,3 +78,25 @@ def get_task_by_id_or_404(task_id: int, db: Session) -> task_schemas.Task:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error",
         )
+
+
+def update_task(
+    task: task_schemas.Task, task_data: task_schemas.TaskUpdate, db: Session
+):
+    try:
+        for key, value in task_data.model_dump(exclude_unset=True).items():
+            setattr(task, key, value)
+
+        db.commit()
+        db.refresh(task)
+        return task_schemas.Task.from_orm(task)
+
+    except Exception as e:
+        logger.error(
+            f"Unexpected error occurred while Updating task: {e}",
+        )
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error updating task",
+        )

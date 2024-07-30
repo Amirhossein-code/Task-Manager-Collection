@@ -12,7 +12,7 @@ class TaskStatus(enum.Enum):
     DONE = "done"
 
 
-class Priority(enum.Enum):
+class TaskPriority(enum.Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -28,7 +28,7 @@ class Task(Base):
     description = Column(String, nullable=True)
 
     status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING)
-    priority = Column(Enum(Priority), nullable=False, default=Priority.LOW)
+    priority = Column(Enum(TaskPriority), nullable=False, default=TaskPriority.LOW)
 
     # User provided
     start_time = Column(DateTime, nullable=False)

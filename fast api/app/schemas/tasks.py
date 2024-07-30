@@ -1,16 +1,18 @@
-from pydantic import BaseModel
-from ..models.tasks import TaskStatus
+from pydantic import BaseModel, ConfigDict
+from ..models.tasks import TaskStatus, TaskPriority
 from datetime import datetime
 
 
 class Task(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     title: str
     description: str | None = None
     status: TaskStatus
-
-    class Config:
-        from_attributes = True
+    priority: TaskPriority
+    start_time: datetime
+    finish_time: datetime
 
 
 class TaskDetail(Task):
@@ -20,6 +22,22 @@ class TaskDetail(Task):
 
 
 class TaskCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str
     description: str | None = None
     status: TaskStatus = TaskStatus.PENDING
+    priority: TaskPriority = TaskPriority.LOW
+    start_time: datetime | None = None
+    finish_time: datetime | None = None
+
+
+class TaskUpdate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    title: str | None = None
+    description: str | None = None
+    status: TaskStatus | None = TaskStatus.PENDING
+    priority: TaskPriority | None = TaskPriority.LOW
+    start_time: datetime | None = None
+    finish_time: datetime | None = None
