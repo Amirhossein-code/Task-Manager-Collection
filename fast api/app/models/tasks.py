@@ -12,17 +12,29 @@ class TaskStatus(enum.Enum):
     DONE = "done"
 
 
+class Priority(enum.Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    URGENT = "urgent"
+    IMMEDIATE = "immediate"
+
+
 class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(225), nullable=False)
     description = Column(String, nullable=True)
+
     status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING)
+    priority = Column(Enum(Priority), nullable=False, default=Priority.LOW)
 
-    # start_time = Column(DateTime, nullable=False)
-    # finish_time = Column(DateTime, nullable=True)
+    # User provided
+    start_time = Column(DateTime, nullable=False)
+    finish_time = Column(DateTime, nullable=True)
 
+    # Time Stamps
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
