@@ -1,13 +1,16 @@
+import logging
 from typing import List
 
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..core.database import get_db
 from ..dependencies.current_user import get_current_user_db_dependency
-from ..models import Task, User
+from ..models import User
 from ..schemas import tasks as task_schemas
 from ..utils.db import tasks as task_crud
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/tasks",
@@ -45,14 +48,15 @@ def get_users_tasks(
     return tasks
 
 
-@router.get("/{task_id}")
-def get_task(
+@router.get("/{task_id}", response_model=task_schemas.Task)
+def get_task_by_id(
     task_id: int,
     user: User = Depends(get_current_user_db_dependency),
     db: Session = Depends(get_db),
 ):
     task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
     if task.owner_id != user.id:
+        # logger.warning(f"Unauthorized access attempt for task ID {task_id}.")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
         )

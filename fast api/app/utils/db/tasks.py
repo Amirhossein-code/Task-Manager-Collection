@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import HTTPException, status
@@ -5,6 +6,8 @@ from sqlalchemy.orm import Session
 
 from ...models import Task, User
 from ...schemas import tasks as task_schemas
+
+logger = logging.getLogger(__name__)
 
 
 def create_new_task(
@@ -22,14 +25,29 @@ def create_new_task(
         db.refresh(new_task)
     except Exception:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Internal server error.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error.",
+        )
     return new_task
 
 
-def get_user_tasks(current_user: User, db: Session) -> List[task_schemas.Task]:
+def get_user_tasks_or_404(current_user: User, db: Session) -> List[task_schemas.Task]:
     try:
-        return db.query(Task).filter(Task.owner_id == current_user.id).all()
-    except Exception:
+        tasks = db.query(Task).filter(Task.owner_id == current_user.id).all()
+        if not tasks:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No tasks found for the logged in user",
+            )
+        return tasks
+
+    except HTTPException as http_exc:
+        raise http_exc
+
+    except Exception as e:
+        f"Unexpected error occurred while retrieving task: {e}"
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error retrieving user tasks",
@@ -37,23 +55,26 @@ def get_user_tasks(current_user: User, db: Session) -> List[task_schemas.Task]:
 
 
 def get_task_by_id(task_id: int, db: Session) -> task_schemas.Task:
-    try:
-        return db.query(Task).filter(Task.id == task_id).first()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving tasks by id",
-        )
+    return db.query(Task).filter(Task.id == task_id).first()
 
 
 def get_task_by_id_or_404(task_id: int, db: Session) -> task_schemas.Task:
     try:
         task = db.query(Task).filter(Task.id == task_id).first()
-        if task is None:
-            raise HTTPException(status_code=404, detail="Task not found")
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+            )
         return task
-    except Exception:
+
+    except HTTPException as http_exc:
+        raise http_exc
+
+    except Exception as exc:
+        logger.error(
+            f"Unexpected error occurred while retrieving task {task_id}: {exc}"
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving tasks by id",
+            detail="Internal server error",
         )
