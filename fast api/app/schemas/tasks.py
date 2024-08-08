@@ -1,6 +1,8 @@
-from pydantic import BaseModel, ConfigDict
-from ..models.tasks import TaskStatus, TaskPriority
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
+
+from ..models.tasks import TaskPriority, TaskStatus
 
 
 class Task(BaseModel):
@@ -11,8 +13,8 @@ class Task(BaseModel):
     description: str | None = None
     status: TaskStatus
     priority: TaskPriority
-    start_time: datetime
-    finish_time: datetime
+    start_time: datetime | None = None
+    finish_time: datetime | None = None
 
 
 class TaskDetail(Task):

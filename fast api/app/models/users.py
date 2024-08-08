@@ -1,4 +1,3 @@
-from ..core.database import Base
 from sqlalchemy import (
     Boolean,
     Column,
@@ -7,6 +6,8 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+
+from ..core.database import Base
 
 
 class User(Base):

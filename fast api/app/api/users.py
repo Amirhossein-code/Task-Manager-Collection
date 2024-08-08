@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
+
 from ..core.database import get_db
-from ..schemas import users as user_schemas
-from ..models import User
-from ..utils.db import users as user_crud
 from ..dependencies.get_active_user import get_current_active_user_db_dependency
+from ..models import User
+from ..schemas import users as user_schemas
+from ..utils.db import users as user_crud
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
-)
+)     
 
 
 @router.post(

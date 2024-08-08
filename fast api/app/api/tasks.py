@@ -20,12 +20,12 @@ router = APIRouter(
 
 @router.post("/", response_model=task_schemas.Task, status_code=status.HTTP_201_CREATED)
 def create_task(
-    task: task_schemas.TaskCreate,
+    request: task_schemas.TaskCreate,
     user: User = Depends(get_current_active_user_db_dependency),
     db: Session = Depends(get_db),
 ):
     new_task = task_crud.create_new_task(
-        task_data=task,
+        request=request,
         user=user,
         db=db,
     )
@@ -33,14 +33,14 @@ def create_task(
 
 
 @router.get(
-    "/me", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK
+    "/", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK
 )
 def get_users_tasks(
-    user: User = Depends(get_current_active_user_db_dependency),
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_active_user_db_dependency),
 ):
     tasks = task_crud.get_user_tasks_or_404(
-        current_user=user,
+        user=user,
         db=db,
     )
     return tasks
@@ -51,14 +51,16 @@ def get_users_tasks(
 )
 def get_task_by_id(
     task_id: int,
-    user: User = Depends(get_current_active_user_db_dependency),
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_active_user_db_dependency),
 ):
     task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+
     if task.owner_id != user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized"
         )
+
     return task
 
 
@@ -67,19 +69,18 @@ def get_task_by_id(
 )
 def update_task(
     task_id: int,
-    task_data: task_schemas.TaskUpdate,
+    request: task_schemas.TaskUpdate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
     task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
 
-    # Check user permissions
     if task.owner_id != user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this task",
         )
 
-    updated_task = task_crud.update_task(task=task, task_data=task_data, db=db)
+    updated_task = task_crud.update_task(task=task, request=request, db=db)
 
     return updated_task

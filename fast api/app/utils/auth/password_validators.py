@@ -1,6 +1,7 @@
 import re
-from typing_extensions import Annotated
+
 from pydantic.functional_validators import AfterValidator
+from typing_extensions import Annotated
 
 
 def check_min_length(v: str) -> str:

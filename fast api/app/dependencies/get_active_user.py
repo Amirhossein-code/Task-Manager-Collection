@@ -1,17 +1,19 @@
 from typing import Annotated
-from fastapi import HTTPException, status, Depends
+
+from fastapi import Depends, HTTPException, status
+
 from ..schemas import users as user_schemas
-from ..utils.auth.token import get_current_user
+from ..utils.auth.authentication import get_current_user
 
 
 async def get_current_active_user_db_dependency(
-    current_user: Annotated[user_schemas.UserDisplay, Depends(get_current_user)],
+    user: Annotated[user_schemas.UserDisplay, Depends(get_current_user)],
 ):
-    if current_user.disabled:
+    if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
         )
-    return current_user
+    return user
 
 
 # from ..core.database import get_db

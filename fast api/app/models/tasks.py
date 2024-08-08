@@ -1,9 +1,10 @@
 import enum
 
-from ..core.database import Base
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from ..core.database import Base
 
 
 class TaskStatus(enum.Enum):

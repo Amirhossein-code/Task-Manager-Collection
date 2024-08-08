@@ -34,7 +34,9 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -48,7 +50,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = token_schema.TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
-    user = user_crud.get_user_by_email(email=token_data, db=Depends(get_db))
+    user = user_crud.get_user_by_email(email=token_data.email, db=db)
     if user is None:
         raise credentials_exception
 
