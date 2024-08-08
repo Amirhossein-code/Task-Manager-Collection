@@ -5,4 +5,4 @@ Project structure: Module-Functionality
 alembic revision --autogenerate -m "message"
 alembic upgrade head
 
-uvicorn api.main:app --reload
+uvicorn app.main:app --reload

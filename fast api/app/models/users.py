@@ -16,7 +16,7 @@ class User(Base):
     email = Column(String(225), nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
     full_name = Column(String(225), nullable=False)
-    is_active = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
 
     UniqueConstraint("email", name="uq_user_email")
 

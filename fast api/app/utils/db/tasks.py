@@ -11,13 +11,13 @@ logger = logging.getLogger(__name__)
 
 
 def create_new_task(
-    task_data: task_schemas.TaskCreate, current_user: User, db: Session
+    task_data: task_schemas.TaskCreate, user: User, db: Session
 ) -> Task:
     new_task = Task(
         title=task_data.title,
         description=task_data.description,
         status=task_data.status,
-        owner_id=current_user.id,
+        owner_id=user.id,
     )
     try:
         db.add(new_task)

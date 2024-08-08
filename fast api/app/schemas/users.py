@@ -2,20 +2,16 @@ from pydantic import BaseModel, EmailStr
 from ..utils.auth.password_validators import ValidatedPassword
 
 
-class UserBase(BaseModel):
-    full_name: str | None = None
-
-
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
     email: EmailStr
     password: ValidatedPassword
+    full_name: str
 
 
-class UserDisplay(UserBase):
+class UserDisplay(BaseModel):
     email: EmailStr
-
-    class Config:
-        from_attributes = True
+    full_name: str | None = None
+    is_active: bool | None = None
 
 
 class UserValidate(BaseModel):
@@ -23,6 +19,5 @@ class UserValidate(BaseModel):
     password: ValidatedPassword
 
 
-class UserUpdate(UserBase):
-    class Config:
-        from_attributes = True
+class UserUpdate(BaseModel):
+    full_name: str | None = None

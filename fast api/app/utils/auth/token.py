@@ -1,11 +1,27 @@
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
 import jwt
-from ...core.settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
 from jwt.exceptions import InvalidTokenError
+from pydantic import EmailStr
+from sqlalchemy.orm import Session
 
+from ...core.database import get_db
+from ...core.security import oauth2_scheme
+from ...core.settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 from ...schemas import token as token_schema
+from ...utils.auth.hashing import Hash
+from ...utils.db import users as user_crud
+
+
+def authenticate_user(db: Session, email: EmailStr, password: str):
+    user = user_crud.get_user_by_email(email, db)
+    if not user:
+        return False
+    if not Hash.validate_password(password, user.hashed_password):
+        return False
+    return user
 
 
 def create_access_token(data: dict) -> str:
@@ -18,7 +34,7 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-def verify_token(token: str) -> token_schema.TokenData:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -32,5 +48,8 @@ def verify_token(token: str) -> token_schema.TokenData:
         token_data = token_schema.TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
+    user = user_crud.get_user_by_email(email=token_data, db=Depends(get_db))
+    if user is None:
+        raise credentials_exception
 
-    return token_data
+    return user
