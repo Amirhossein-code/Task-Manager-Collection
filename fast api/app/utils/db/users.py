@@ -21,6 +21,12 @@ def get_user_or_404(email: EmailStr, db: Session) -> User:
 
 
 def create_new_user(request: user_schemas.UserCreate, db: Session) -> User:
+    existing_user = get_user_by_email(request.email, db)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use"
+        )
+
     hashed_password = Hash.hash_password(password=request.password)
 
     new_user = User(
@@ -43,7 +49,6 @@ def update_user(user: User, user_update: user_schemas.UserUpdate, db: Session) -
     return user
 
 
-def delete_user(user: User, db: Session) -> dict:
+def delete_user(user: User, db: Session) -> None:
     db.delete(user)
     db.commit()
-    return {"message": "User deleted successfully"}
