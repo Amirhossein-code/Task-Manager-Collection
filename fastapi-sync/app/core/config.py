@@ -19,9 +19,9 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # Access settings through the `settings` instance
-print(settings.database_url)
-print(settings.secret_key)
-print(settings.algorithm)
-print(settings.access_token_expire_minutes)
-print(settings.echo_sql)
-print(settings.test)
+# print(settings.database_url)
+# print(settings.secret_key)
+# print(settings.algorithm)
+# print(settings.access_token_expire_minutes)
+# print(settings.echo_sql)
+# print(settings.test)
