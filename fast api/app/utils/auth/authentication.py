@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from ...core.database import get_db
 from ...core.security import oauth2_scheme
-from ...core.settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
+from ...core.config import settings
 from ...schemas import token as token_schema
 from ...utils.auth.hashing import Hash
 from ...utils.db import users as user_crud
@@ -27,14 +27,16 @@ def authenticate_user(db: Session, email: EmailStr, password: str):
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(
-        minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)
+        minutes=int(settings.access_token_expire_minutes)
     )
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.secret_key, algorithm=settings.algorithm
+    )
     return encoded_jwt
 
 
-async def get_current_user(
+def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
@@ -43,7 +45,9 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        )
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception

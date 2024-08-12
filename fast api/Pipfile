@@ -14,5 +14,6 @@ psycopg2-binary = "*"
 email-validator = "*"
 bcrypt = "4.0.1"
 passlib = "*"
+pydantic-settings = "*"
 
 [dev-packages]

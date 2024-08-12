@@ -1,8 +1,8 @@
-"""Initial migration
+"""initial
 
-Revision ID: 1de0a73fea90
+Revision ID: 054aa139aaac
 Revises: 
-Create Date: 2024-07-30 02:35:22.912033
+Create Date: 2024-08-12 08:16:33.957073
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1de0a73fea90'
+revision: str = '054aa139aaac'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,7 +34,7 @@ def upgrade() -> None:
     sa.Column('title', sa.String(length=225), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('status', sa.Enum('PENDING', 'ONGOING', 'DONE', name='taskstatus'), nullable=False),
-    sa.Column('priority', sa.Enum('LOW', 'MEDIUM', 'HIGH', 'URGENT', 'IMMEDIATE', name='priority'), nullable=False),
+    sa.Column('priority', sa.Enum('LOW', 'MEDIUM', 'HIGH', 'URGENT', 'IMMEDIATE', name='taskpriority'), nullable=False),
     sa.Column('start_time', sa.DateTime(), nullable=False),
     sa.Column('finish_time', sa.DateTime(), nullable=True),
     sa.Column('time_created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),

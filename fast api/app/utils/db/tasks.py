@@ -11,6 +11,64 @@ from ...schemas import tasks as task_schemas
 logger = logging.getLogger(__name__)
 
 
+def get_task_by_id(task_id: int, db: Session) -> Task:
+    return db.query(Task).filter(Task.id == task_id).first()
+
+
+def get_task_by_id_or_404(task_id: int, db: Session) -> Task:
+    try:
+        task = get_task_by_id(task_id=task_id, db=db)
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
+            )
+        return task
+    except HTTPException as http_exc:
+        raise http_exc
+    except SQLAlchemyError as e:
+        logger.error(
+            f"Database error occurred while retrieving task with id {task_id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="A database error occurred while retrieving the task.",
+        )
+    except Exception as exc:
+        logger.error(
+            f"Unexpected error occurred while retrieving task with id {task_id}: {exc}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while retrieving the task.",
+        )
+
+
+def get_user_tasks(user: User, db: Session) -> List[Task]:
+    try:
+        tasks = db.query(Task).filter(Task.owner_id == user.id).all()
+        return tasks
+    except SQLAlchemyError as e:
+        logger.error(
+            f"Database error occurred while retrieving tasks for user with id {user.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="A database error occurred while retrieving user tasks.",
+        )
+    except Exception as e:
+        logger.error(
+            f"Unexpected error occurred while retrieving tasks for user with id {user.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while retrieving user tasks.",
+        )
+
+
 def create_new_task(request: task_schemas.TaskCreate, user: User, db: Session) -> Task:
     try:
         task_data = request.model_dump()
@@ -20,105 +78,86 @@ def create_new_task(request: task_schemas.TaskCreate, user: User, db: Session) -
         db.commit()
         db.refresh(new_task)
         return new_task
-
     except SQLAlchemyError as e:
         db.rollback()
-        logger.error(f"Database error occurred: {e}")
+        logger.error(
+            f"Database error occurred while creating a new task for user with id {user.id}: {e}",
+            exc_info=True,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while creating the task.",
         )
     except Exception as e:
         db.rollback()
-        logger.error(f"Unexpected error occurred: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred.",
-        )
-    # return new_task
-
-
-def get_user_tasks_or_404(user: User, db: Session) -> List[Task]:
-    try:
-        tasks = db.query(Task).filter(Task.owner_id == user.id).all()
-        if not tasks:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No tasks found for the logged in user",
-            )
-        return tasks
-
-    except HTTPException as http_exc:
-        raise http_exc
-
-    except Exception as e:
-        f"Unexpected error occurred while retrieving task: {e}"
-
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving user tasks",
-        )
-
-
-def get_task_by_id(task_id: int, db: Session) -> Task:
-    return db.query(Task).filter(Task.id == task_id).first()
-
-
-def get_task_by_id_or_404(task_id: int, db: Session) -> Task:
-    try:
-        task = db.query(Task).filter(Task.id == task_id).first()
-        if not task:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Task not found"
-            )
-        return task
-
-    except HTTPException as http_exc:
-        raise http_exc
-
-    except Exception as exc:
         logger.error(
-            f"Unexpected error occurred while retrieving task {task_id}: {exc}"
+            f"Unexpected error occurred while creating a new task for user with id {user.id}: {e}",
+            exc_info=True,
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error",
+            detail="An unexpected error occurred while creating the task.",
         )
 
 
-def update_task(task: Task, request: task_schemas.TaskUpdate, db: Session) -> Task:
+def update_task(
+    task: Task,
+    update_data: task_schemas.TaskUpdate,
+    db: Session,
+    full_update: bool = False,  # True for PUT, False for PATCH
+) -> Task:
     try:
-        for key, value in request.model_dump(exclude_unset=True).items():
+        data_to_update = update_data.model_dump(exclude_unset=not full_update)
+
+        for key, value in data_to_update.items():
             setattr(task, key, value)
 
         db.commit()
         db.refresh(task)
         return task
-
-    except Exception as e:
-        logger.error(
-            f"Unexpected error occurred while Updating task: {e}",
-        )
+    except SQLAlchemyError as e:
         db.rollback()
+        logger.error(
+            f"Database error occurred while updating task with id {task.id}: {e}",
+            exc_info=True,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error updating task",
+            detail="A database error occurred while updating the task.",
+        )
+    except Exception as e:
+        db.rollback()
+        logger.error(
+            f"Unexpected error occurred while updating task with id {task.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while updating the task.",
         )
 
 
 def delete_task(task: Task, db: Session) -> None:
-    db.delete(task)
-    db.commit()
-
-
-def patch_task(
-    task: Task,
-    update_task_data: task_schemas.TaskUpdate,
-    db: Session,
-) -> Task:
-    for key, value in update_task_data.model_dump(exclude_unset=True).items():
-        setattr(task, key, value)
-
-    db.commit()
-    db.refresh(task)
-    return task
+    try:
+        db.delete(task)
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(
+            f"Database error occurred while deleting task with id {task.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="A database error occurred while deleting the task.",
+        )
+    except Exception as e:
+        db.rollback()
+        logger.error(
+            f"Unexpected error occurred while deleting task with id {task.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while deleting the task.",
+        )
