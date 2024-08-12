@@ -1,4 +1,3 @@
-import logging
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -9,8 +8,6 @@ from ..dependencies.get_active_user import get_current_active_user_db_dependency
 from ..models import User
 from ..schemas import tasks as task_schemas
 from ..utils.db import tasks as task_crud
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/tasks",
@@ -32,9 +29,7 @@ def create_task(
     return new_task
 
 
-@router.get(
-    "/", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK
-)
+@router.get("/", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK)
 def get_users_tasks(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_active_user_db_dependency),
@@ -83,4 +78,47 @@ def update_task(
 
     updated_task = task_crud.update_task(task=task, request=request, db=db)
 
+    return updated_task
+
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_active_user_db_dependency),
+):
+    task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+
+    if task.owner_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this task",
+        )
+
+    task_crud.delete_task(task=task, db=db)
+
+    return None
+
+
+@router.patch("/{task_id}", response_model=task_schemas.Task)
+def patch_task(
+    task_id: int,
+    request: task_schemas.TaskUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_active_user_db_dependency),
+):
+    task = task_crud.get_task_by_id_or_404(task_id, db)
+
+    if task.owner_id != user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this task",
+        )
+
+    updated_task = task_crud.patch_task(
+        task=task,
+        update_task_data=request,
+        db=db,
+    )
+    
     return updated_task

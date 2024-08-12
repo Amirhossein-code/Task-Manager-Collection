@@ -109,3 +109,16 @@ def update_task(task: Task, request: task_schemas.TaskUpdate, db: Session) -> Ta
 def delete_task(task: Task, db: Session) -> None:
     db.delete(task)
     db.commit()
+
+
+def patch_task(
+    task: Task,
+    update_task_data: task_schemas.TaskUpdate,
+    db: Session,
+) -> Task:
+    for key, value in update_task_data.model_dump(exclude_unset=True).items():
+        setattr(task, key, value)
+
+    db.commit()
+    db.refresh(task)
+    return task

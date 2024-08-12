@@ -34,11 +34,11 @@ def get_logged_in_user(
     "/me", response_model=user_schemas.UserDisplay, status_code=status.HTTP_200_OK
 )
 def edit_logged_in_user_data(
-    user_update: user_schemas.UserUpdate,
+    user_update_data: user_schemas.UserUpdate,
     user: User = Depends(get_current_active_user_db_dependency),
     db: Session = Depends(get_db),
 ):
-    updated_user = user_crud.update_user(user, user_update, db)
+    updated_user = user_crud.update_user(user, user_update_data, db)
     return updated_user
 
 

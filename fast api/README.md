@@ -12,4 +12,7 @@ uvicorn app.main:app --reload
   "email": "user@example.com",
   "password": "ILoveFastAPI@222",
   "full_name": "string"
+
+user@example.com
+ILoveFastAPI@222
 } -->
