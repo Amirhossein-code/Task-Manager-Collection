@@ -14,3 +14,8 @@ alembic revision --autogenerate -m "message"
 alembic upgrade head
 
 uvicorn app.main:app --reload
+
+<!--
+user@example.com
+ILoveFastAPI@222
+ -->

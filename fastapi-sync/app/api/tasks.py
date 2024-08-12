@@ -64,7 +64,7 @@ def get_task_by_id(
 )
 def put_update_task(
     task_id: int,
-    request: task_schemas.TaskUpdate,
+    update_task_data: task_schemas.TaskUpdate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
@@ -78,7 +78,7 @@ def put_update_task(
 
     updated_task = task_crud.update_task(
         task=task,
-        request=request,
+        update_data=update_task_data,
         db=db,
         full_update=False,
     )
@@ -89,7 +89,7 @@ def put_update_task(
 @router.patch("/{task_id}", response_model=task_schemas.Task)
 def patch_update_task(
     task_id: int,
-    request: task_schemas.TaskUpdate,
+    update_task_data: task_schemas.TaskUpdate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
@@ -102,7 +102,7 @@ def patch_update_task(
         )
 
     updated_task = task_crud.update_task(
-        task=task, update_task_data=request, db=db, full_update=False
+        task=task, update_data=update_task_data, db=db, full_update=False
     )
 
     return updated_task

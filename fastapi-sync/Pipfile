@@ -15,5 +15,7 @@ email-validator = "*"
 bcrypt = "4.0.1"
 passlib = "*"
 pydantic-settings = "*"
+pyt = "*"
+pytz = "*"
 
 [dev-packages]
