@@ -6,7 +6,7 @@ from ..models.tasks import TaskPriority, TaskStatus
 
 
 class Task(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     id: int
     title: str
@@ -24,7 +24,7 @@ class TaskDetail(Task):
 
 
 class TaskCreate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     title: str
     description: str | None = None
@@ -35,7 +35,7 @@ class TaskCreate(BaseModel):
 
 
 class TaskUpdate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     title: str | None = None
     description: str | None = None
