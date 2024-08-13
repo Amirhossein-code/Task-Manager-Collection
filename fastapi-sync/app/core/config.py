@@ -4,6 +4,7 @@ from pydantic import Field, ConfigDict
 
 class Settings(BaseSettings):
     database_url: str = Field(...)
+    test_database_url: str = Field(...)
     secret_key: str = Field(...)
     algorithm: str = Field(...)
     access_token_expire_minutes: int = Field(30)

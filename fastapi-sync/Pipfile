@@ -17,5 +17,6 @@ passlib = "*"
 pydantic-settings = "*"
 pyt = "*"
 pytz = "*"
+pytest = "*"
 
 [dev-packages]
