@@ -118,8 +118,9 @@ def create_user_with_token(create_user, create_access_token) -> str:
     def _do(
         email: str = "user900@gmail.com",
         password: str = "ILoveFastAPI90@9010",
+        full_name: str = "Just a random name",
     ):
-        create_user(email=email, password=password)
+        create_user(email=email, password=password, full_name=full_name)
         res = create_access_token(email=email, password=password)
         response_json = res.json()
         return response_json["access_token"]
