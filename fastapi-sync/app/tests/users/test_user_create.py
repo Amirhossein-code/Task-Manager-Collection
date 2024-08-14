@@ -1,18 +1,15 @@
 import pytest
-from ..models import User
-from ..utils.auth.hashing import Hash
-from .conftest import apply_migrations, client, db_session  # noqa: F401
+from ...models import User
+from ...utils.auth.hashing import Hash
+# from ..conftest import apply_migrations
 
 
 class TestUserCreate:
-    def test_sign_up_create_user_returns_201(self, db_session):  # noqa: F811
-        res = client.post(
-            "/users/",
-            json={
-                "email": "user90@gmail.com",
-                "password": "ILoveFastAPI990@90",
-                "full_name": "Test Full Name",
-            },
+    def test_sign_up_create_user_returns_201(self, db_session, create_user):  # noqa: F811
+        res = create_user(
+            email="user90@gmail.com",
+            password="ILoveFastAPI990@90",
+            full_name="Test Full Name",
         )
         assert res.status_code == 201, res.text
         # Check returned data from the endpoint
@@ -56,17 +53,14 @@ class TestUserCreate:
     )
     def test_password_validation_fails_returns_422(
         self,
+        create_user,
         db_session,  # noqa: F811
         password: str,
         expected_error: str,
     ):
-        res = client.post(
-            "/users/",
-            json={
-                "email": "user91@gmail.com",
-                "password": password,
-                "full_name": "Test Full Name",
-            },
+        res = create_user(
+            email="user91@gmail.com",
+            password=password,
         )
         assert res.status_code == 422, res.text
         response_json = res.json()
@@ -76,3 +70,19 @@ class TestUserCreate:
 
         user = db_session.query(User).filter(User.email == "user91@gmail.com").first()
         assert user is None
+
+    def test_duplicate_email_registration_returns_400(self, create_user):
+        res1 = create_user(
+            email="user92@gmail.com",
+            password="ILoveFastAPI990@90",
+        )
+        assert res1.status_code == 201
+
+        res = create_user(
+            email="user92@gmail.com",
+            password="ILoveFastAPI990@90",
+        )
+        assert res.status_code == 400, res.text
+
+        response_json = res.json()
+        assert response_json["detail"] == "Email already in use"

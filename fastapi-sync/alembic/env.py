@@ -14,10 +14,7 @@ from app.models.tasks import Task
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-if settings.test:
-    config.set_main_option("sqlalchemy.url", settings.test_database_url)
-else:
-    config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 
 # Interpret the config file for Python logging.
