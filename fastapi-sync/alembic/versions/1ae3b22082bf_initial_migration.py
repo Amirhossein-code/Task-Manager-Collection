@@ -1,8 +1,8 @@
-"""initial
+"""Initial Migration
 
-Revision ID: 054aa139aaac
+Revision ID: 1ae3b22082bf
 Revises: 
-Create Date: 2024-08-12 08:16:33.957073
+Create Date: 2024-08-14 13:49:26.422795
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '054aa139aaac'
+revision: str = '1ae3b22082bf'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,6 +26,8 @@ def upgrade() -> None:
     sa.Column('hashed_password', sa.String(), nullable=False),
     sa.Column('full_name', sa.String(length=225), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('last_updated', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
@@ -35,8 +37,8 @@ def upgrade() -> None:
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('status', sa.Enum('PENDING', 'ONGOING', 'DONE', name='taskstatus'), nullable=False),
     sa.Column('priority', sa.Enum('LOW', 'MEDIUM', 'HIGH', 'URGENT', 'IMMEDIATE', name='taskpriority'), nullable=False),
-    sa.Column('start_time', sa.DateTime(), nullable=False),
-    sa.Column('finish_time', sa.DateTime(), nullable=True),
+    sa.Column('start_time', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('finish_time', sa.DateTime(timezone=True), nullable=True),
     sa.Column('time_created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.Column('time_updated', sa.DateTime(timezone=True), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=False),

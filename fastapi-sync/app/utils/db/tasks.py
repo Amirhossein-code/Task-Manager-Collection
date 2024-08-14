@@ -86,7 +86,7 @@ def create_new_task(request: task_schemas.TaskCreate, user: User, db: Session) -
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while creating the task.",
+            detail=f"An error occurred while creating the task.{e}",
         )
     except Exception as e:
         db.rollback()

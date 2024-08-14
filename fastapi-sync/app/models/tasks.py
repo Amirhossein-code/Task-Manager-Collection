@@ -16,13 +16,13 @@ from sqlalchemy.sql import func
 from ..core.database import Base
 
 
-class TaskStatus(enum.Enum):
+class TaskStatus(str, enum.Enum):
     PENDING = "pending"
     ONGOING = "ongoing"
     DONE = "done"
 
 
-class TaskPriority(enum.Enum):
+class TaskPriority(str, enum.Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -56,8 +56,23 @@ class Task(Base):
 
 
 @event.listens_for(Task, "before_insert")
+def validate_task_at_creation(mapper, connection, target):
+    if target.status == TaskStatus.DONE:
+        raise ValueError("Task status can not be Done at creation.")
+
+    utc_timezone = pytz.utc
+
+    if target.start_time is not None:
+        if target.start_time.tzinfo is None:
+            target.start_time = utc_timezone.localize(target.start_time)
+
+        if target.start_time < utc_timezone.localize(pytz.datetime.datetime.utcnow()):
+            raise ValueError("start_time must be greater than the current time")
+
+
+@event.listens_for(Task, "before_insert")
 @event.listens_for(Task, "before_update")
-def validate_task(mapper, connection, target):
+def validate_task_start_and_finish_time(mapper, connection, target):
     # Ensure both start_time and finish_time are timezone aware
     utc_timezone = pytz.utc
 
