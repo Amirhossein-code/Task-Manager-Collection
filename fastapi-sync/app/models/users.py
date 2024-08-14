@@ -1,11 +1,13 @@
 from sqlalchemy import (
     Boolean,
     Column,
+    DateTime,
     Integer,
     String,
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from ..core.database import Base
 
@@ -18,6 +20,11 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     full_name = Column(String(225), nullable=False)
     is_active = Column(Boolean, default=True)
+
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    last_updated = Column(
+        DateTime(timezone=True), default=func.now(), onupdate=func.now()
+    )
 
     UniqueConstraint("email", name="uq_user_email")
 

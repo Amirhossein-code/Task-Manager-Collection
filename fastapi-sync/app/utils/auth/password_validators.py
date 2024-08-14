@@ -10,6 +10,12 @@ def check_min_length(v: str) -> str:
     return v
 
 
+def check_max_length(v: str) -> str:
+    if len(v) > 50:
+        raise ValueError("Password must be at most 50 characters long")
+    return v
+
+
 def check_uppercase(v: str) -> str:
     if not re.search(r"[A-Z]", v):
         raise ValueError("Password must contain at least one uppercase letter")
@@ -37,6 +43,7 @@ def check_special_char(v: str) -> str:
 ValidatedPassword = Annotated[
     str,
     AfterValidator(check_min_length),
+    AfterValidator(check_max_length),
     AfterValidator(check_uppercase),
     AfterValidator(check_lowercase),
     AfterValidator(check_digit),
