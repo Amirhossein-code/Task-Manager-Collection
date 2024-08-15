@@ -41,7 +41,7 @@ class Task(Base):
     priority = Column(Enum(TaskPriority), nullable=False, default=TaskPriority.LOW)
 
     # User provided
-    start_time = Column(DateTime(timezone=True), nullable=False)
+    start_time = Column(DateTime(timezone=True), nullable=True)
     finish_time = Column(DateTime(timezone=True), nullable=True)
 
     # Time Stamps
@@ -55,40 +55,18 @@ class Task(Base):
         return f"<Task(title='{self.title}', status='{self.status.name}', owner_id={self.owner_id})>"
 
 
-@event.listens_for(Task, "before_insert")
-def validate_task_at_creation(mapper, connection, target):
-    if target.status == TaskStatus.DONE:
-        raise ValueError("Task status can not be Done at creation.")
-
+@event.listens_for(Task, "before_update")
+def validate_task_start_and_finish_time(mapper, connection, target):
     utc_timezone = pytz.utc
 
     if target.start_time is not None:
         if target.start_time.tzinfo is None:
             target.start_time = utc_timezone.localize(target.start_time)
 
-        if target.start_time < utc_timezone.localize(pytz.datetime.datetime.utcnow()):
-            raise ValueError("start_time must be greater than the current time")
-
-
-@event.listens_for(Task, "before_insert")
-@event.listens_for(Task, "before_update")
-def validate_task_start_and_finish_time(mapper, connection, target):
-    # Ensure both start_time and finish_time are timezone aware
-    utc_timezone = pytz.utc
-
-    if target.start_time is not None:
-        if target.start_time.tzinfo is None:
-            target.start_time = utc_timezone.localize(
-                target.start_time
-            )  # Make it aware in UTC
-
     if target.finish_time is not None:
         if target.finish_time.tzinfo is None:
-            target.finish_time = utc_timezone.localize(
-                target.finish_time
-            )  # Make it aware in UTC
+            target.finish_time = utc_timezone.localize(target.finish_time)
 
-    # Perform the comparison only if both times are set
     if target.start_time is not None and target.finish_time is not None:
         if target.start_time >= target.finish_time:
-            raise ValueError("finish_time must be greater than start_time")
+            raise ValueError("database :finish_time must be greater than start_time")

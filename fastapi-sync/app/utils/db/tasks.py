@@ -88,6 +88,7 @@ def create_new_task(request: task_schemas.TaskCreate, user: User, db: Session) -
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while creating the task.{e}",
         )
+
     except Exception as e:
         db.rollback()
         logger.error(
@@ -124,6 +125,15 @@ def update_task(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"A database error occurred while updating the task.{e}",
+        )
+    except ValueError as e:
+        db.rollback()
+        logger.error(
+            f"Value Error occurred while updating task with id {task.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Value Error: {e}"
         )
     except Exception as e:
         db.rollback()
