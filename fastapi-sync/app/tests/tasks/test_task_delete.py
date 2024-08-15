@@ -67,3 +67,19 @@ class TestTaskDelete:
         # Make sure it is deleted from the database
         task = db_session.query(Task).filter(Task.id == task_id).first()
         assert task is not None
+
+    def test_logged_out_user_deletes_task_returns_401(self, create_task, client):
+        
+        res, _ = create_task(
+            email="user22@gmail.com",
+            password="Halo9980@@#don",
+        )
+        res_json = res.json()
+        task_id = res_json["id"]
+
+        # Delete the task without the access token
+        delete_response = client.delete(
+            f"/tasks/{task_id}",
+        )
+
+        assert delete_response.status_code == 401

@@ -18,5 +18,7 @@ pydantic-settings = "*"
 pyt = "*"
 pytz = "*"
 pytest = "*"
+coverage = "*"
+pytest-cov = "*"
 
 [dev-packages]
