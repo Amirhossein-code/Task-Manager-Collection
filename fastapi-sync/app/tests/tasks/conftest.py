@@ -5,6 +5,8 @@ from datetime import datetime, timedelta, timezone
 @pytest.fixture()
 def create_task(client, create_user_with_token):
     def do_create_task(
+        email: str = "user99@gmail.com",
+        password: str = "ILoveFastAPI893432@@3432",
         title: str = "Task Create fixture",
         description: str = "This is the new task created to test task create endpoint",
         status: str = "pending",
@@ -12,7 +14,7 @@ def create_task(client, create_user_with_token):
         start_time: int | None = None,
         finish_time: int | None = None,
     ):
-        access_token = create_user_with_token(email="user98@gmail.com")
+        access_token = create_user_with_token(email=email, password=password)
 
         now = datetime.now(timezone.utc)
         posted_task_data = {
