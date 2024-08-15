@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta, timezone
-
 import pytest
 
 from ...models import Task
@@ -24,38 +22,26 @@ class TestTaskCreate:
         ],
     )
     def test_logged_in_user_creates_task_returns_201(
-        self, client, create_user_with_token, status, priority, db_session
+        self, create_task, status, priority, db_session
     ):
-        status = str(status)
-        priority = str(priority)
-
-        title = "Task New 1"
+        title = "Task Create fixture"
         description = "This is the new task created to test task create endpoint"
+        start_time_mins_from_now = 10
+        finish_time_mins_from_now = 20
 
-        access_token = create_user_with_token(email="user98@gmail.com")
-
-        now = datetime.now(timezone.utc)
-        start_time = now + timedelta(minutes=10)
-        finish_time = now + timedelta(minutes=20)
-
-        start_time_iso = start_time.isoformat().replace("+00:00", "Z")
-        finish_time_iso = finish_time.isoformat().replace("+00:00", "Z")
-
-        response = client.post(
-            "/tasks",
-            json={
-                "title": title,
-                "description": description,
-                "status": status,
-                "priority": priority,
-                "start_time": start_time_iso,
-                "finish_time": finish_time_iso,
-            },
-            headers={"Authorization": f"Bearer {access_token}"},
+        response, posted_task_data = create_task(
+            title=title,
+            description=description,
+            status=status,
+            priority=priority,
+            start_time=start_time_mins_from_now,
+            finish_time=finish_time_mins_from_now,
         )
 
-        assert response.status_code == 201
+        start_time_iso = posted_task_data["start_time"]
+        finish_time_iso = posted_task_data["finish_time"]
 
+        # Ensure the API response body data is valid
         response_json = response.json()
 
         assert response_json["title"] == title
@@ -65,6 +51,7 @@ class TestTaskCreate:
         assert response_json["start_time"] == start_time_iso[:-1]
         assert response_json["finish_time"] == finish_time_iso[:-1]
 
+        # Ensure the changes are correct in the database
         task = db_session.query(Task).filter(Task.id == response_json["id"]).first()
 
         assert task is not None
@@ -80,11 +67,11 @@ class TestTaskCreate:
         assert start_time_db.isoformat() == start_time_iso[:-1]
         assert finish_time_db.isoformat() == finish_time_iso[:-1]
 
+        # Printing the time stamps a good way to understand what is going on
         with open("task_time_stamps.txt", "a") as file:
             lines_to_write = [
-                f"now: {now}\n",
-                f"start_time at submit is: {start_time}\n",
-                f"finish_time is: {finish_time}\n",
+                f"start_time at submit is: {start_time_mins_from_now}\n",
+                f"finish_time is: {finish_time_mins_from_now}\n",
                 f"iso format of start_time: {start_time_iso}\n",
                 f"iso format of finish time: {finish_time_iso}\n",
                 f"start_time_db = {start_time_db}\n",
@@ -95,27 +82,41 @@ class TestTaskCreate:
 
             file.writelines(lines_to_write)
 
-    def test_create_task_with_status_done_returns_422(
-        self, client, create_user_with_token
+    def test_create_task_with_status_done_returns_422(self, create_task):
+        res, _ = create_task(status="done", start_time=10, finish_time=30)
+
+        assert res.status_code == 422
+
+    @pytest.mark.parametrize(
+        "start_time, finish_time",
+        [
+            (10, 10),  # Test same start and finish time
+            (15, 10),  # Test start time after finish time
+            (-5, 10),  # Test start time 5 minutes before current time
+        ],
+    )
+    def test_create_task_with_invalid_times_returns_422(
+        self, create_task, start_time, finish_time
     ):
-        access_token = create_user_with_token(email="user98@gmail.com")
-        now = datetime.now(timezone.utc)
-        start_time = now + timedelta(minutes=10)
-        finish_time = now + timedelta(minutes=20)
-
-        start_time_iso = start_time.isoformat().replace("+00:00", "Z")
-        finish_time_iso = finish_time.isoformat().replace("+00:00", "Z")
-        response = client.post(
-            "/tasks",
-            json={
-                "title": "Task New 1",
-                "description": "This is the new task created to test task create endpoint",
-                "status": "done",
-                "priority": "low",
-                "start_time": start_time_iso,
-                "finish_time": finish_time_iso,
-            },
-            headers={"Authorization": f"Bearer {access_token}"},
+        res, _ = create_task(
+            start_time=start_time,
+            finish_time=finish_time,
         )
+        assert res.status_code == 422
 
-        assert response.status_code == 422
+    @pytest.mark.parametrize(
+        "start_time, finish_time",
+        [
+            (None, 5),
+            (None, None),
+            (5, None),
+        ],
+    )
+    def test_create_task_with_none_times_returns_211(
+        self, create_task, start_time, finish_time
+    ):
+        res, _ = create_task(
+            start_time=start_time,
+            finish_time=finish_time,
+        )
+        assert res.status_code == 201
