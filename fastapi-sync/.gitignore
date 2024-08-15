@@ -1,6 +1,12 @@
 # Environment variables
 .env 
+
+# alembic
 alembic.ini
+
+##
+
+task_time_stamps.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

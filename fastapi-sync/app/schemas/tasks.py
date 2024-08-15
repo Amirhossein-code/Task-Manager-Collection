@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-import pytz
 
 from pydantic import (
     BaseModel,
@@ -43,17 +42,7 @@ class TaskCreate(BaseModel):
     def validate_status(cls, status: TaskStatus):
         if status == TaskStatus.DONE:
             raise ValueError("status cannot be Done at creation.")
-
-    @field_validator("start_time", "finish_time", mode="before")
-    def validate_and_localize_time(cls, value, field):
-        if value is not None:
-            if value.tzinfo is None:
-                raise ValueError(f"{field.name} must be timezone-aware.")
-
-            # Localize to UTC if already timezone-aware
-            if value.tzinfo.zone != "UTC":
-                value = value.astimezone(pytz.utc)
-        return value
+        return status
 
     @field_validator("start_time")
     def validate_start_time(cls, start_time):
@@ -85,17 +74,6 @@ class TaskUpdate(BaseModel):
     priority: TaskPriority | None = TaskPriority.LOW
     start_time: datetime | None = None
     finish_time: datetime | None = None
-
-    @field_validator("start_time", "finish_time", mode="before")
-    def validate_and_localize_time(cls, value, field):
-        if value is not None:
-            if value.tzinfo is None:
-                raise ValueError(f"{field.name} must be timezone-aware.")
-
-            # Localize to UTC if already timezone-aware
-            if value.tzinfo.zone != "UTC":
-                value = value.astimezone(pytz.utc)
-        return value
 
     @field_validator("start_time")
     def validate_start_time(cls, start_time):
