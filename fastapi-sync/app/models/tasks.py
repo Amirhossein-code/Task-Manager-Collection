@@ -52,7 +52,7 @@ class Task(Base):
     owner = relationship("User", back_populates="tasks")
 
     def __repr__(self):
-        return f"<Task(title='{self.title}', status='{self.status.name}', owner_id={self.owner_id})>"
+        return f"<Task(title='{self.title}'>"
 
 
 @event.listens_for(Task, "before_update")

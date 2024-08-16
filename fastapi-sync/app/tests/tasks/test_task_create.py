@@ -54,6 +54,8 @@ class TestTaskCreate:
         # Ensure the changes are correct in the database
         task = db_session.query(Task).filter(Task.id == response_json["id"]).first()
 
+        assert repr(task) == f"<Task(title='{title}'>"
+
         assert task is not None
         assert task.id == response_json["id"]
         assert task.title == title

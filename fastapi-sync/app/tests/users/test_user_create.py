@@ -6,22 +6,28 @@ from ...utils.auth.hashing import Hash
 
 class TestUserCreate:
     def test_sign_up_create_user_returns_201(self, db_session, create_user):  # noqa: F811
+        email = "user90@gmail.com"
+        password = "ILoveFastAPI990@90"
+        full_name = "Test Full Name"
         res = create_user(
-            email="user90@gmail.com",
-            password="ILoveFastAPI990@90",
-            full_name="Test Full Name",
+            email=email,
+            password=password,
+            full_name=full_name,
         )
         assert res.status_code == 201, res.text
         # Check returned data from the endpoint
         data = res.json()
-        assert data["email"] == "user90@gmail.com"
-        assert data["full_name"] == "Test Full Name"
+        assert data["email"] == email
+        assert data["full_name"] == full_name
         assert data["is_active"]
 
-        user = db_session.query(User).filter(User.email == "user90@gmail.com").first()
+        user = db_session.query(User).filter(User.email == email).first()
 
-        # check record creation
+        # Check the repr 
+        assert repr(user) == f"<User: {full_name}>"
+
         assert user is not None
+
         # check password hash
         assert user.hashed_password != "ILoveFastAPI990@90"
         assert Hash.validate_password("ILoveFastAPI990@90", user.hashed_password)
