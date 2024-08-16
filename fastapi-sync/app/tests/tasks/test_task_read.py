@@ -83,3 +83,30 @@ class TestTaskRead:
         )
 
         assert get_response.status_code == 401
+
+    def test_logged_in_user_tries_retrieving_task_of_other_user_returns_401(
+        self, create_task, create_user_with_token, client
+    ):
+        user_1_email = "user28@gmail.com"
+        user_1_password = "Halo9980@@#don"
+
+        user_2_email = "user29@gmail.com"
+        user_2_password = "Halo99736580@@#don2323"
+
+        # Create task with the specified email and password
+        response_create_task, _ = create_task(
+            email=user_1_email, password=user_1_password
+        )
+        response_create_task_json = response_create_task.json()
+        task_id = response_create_task_json["id"]
+
+        #  Get the access token for the second user that is not task owner
+        access_token = create_user_with_token(
+            email=user_2_email, password=user_2_password
+        )
+        get_response = client.get(
+            f"/tasks/{task_id}",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        assert get_response.status_code == 403
