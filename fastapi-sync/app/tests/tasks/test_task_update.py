@@ -130,7 +130,7 @@ class TestUserUpdate:
             ("PATCH", "user263@gmail.com"),
         ],
     )
-    def test_logged_in_user_updates_task_with_invalid_start_finish_time_returns_422(
+    def test_logged_in_user_updates_task_with_invalid_start_finish_time_returns_422_or_200(
         self,
         client,
         create_task,
@@ -186,3 +186,87 @@ class TestUserUpdate:
         )
 
         assert response.status_code == expected_response
+
+    def test_event_listeners_for_task_returns(
+        self,
+        client,
+        create_task,
+        create_access_token,
+    ):
+        email = "user30@gmail.com"
+        password = "albo2322@MnopW"
+
+        start_time = 10
+        updated_finish_time_mins = 5
+
+        res, _ = create_task(
+            email=email,
+            password=password,
+            start_time=start_time,
+        )
+
+        response_json = res.json()
+        task_id = response_json["id"]
+
+        access_token_res = create_access_token(email=email, password=password)
+        access_token_response = access_token_res.json()
+        access_token = access_token_response["access_token"]
+        now = datetime.now(timezone.utc)
+
+        finish_time_dt = now + timedelta(minutes=updated_finish_time_mins)
+        updated_finish_time = finish_time_dt.isoformat().replace("+00:00", "Z")
+
+        update_data = {
+            "finish_time": updated_finish_time,
+        }
+
+        response = client.patch(
+            f"/tasks/{task_id}",
+            json=update_data,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        assert response.status_code == 400
+
+    def test_event_listeners_for_task_update_start_time_returns_400(
+        self,
+        client,
+        create_task,
+        create_access_token,
+    ):
+        email = "user30@gmail.com"
+        password = "albo2322@MnopW"
+
+        finish_time = 10
+        updated_start_time_mins = 15
+
+        res, _ = create_task(
+            email=email,
+            password=password,
+            finish_time=finish_time,
+        )
+
+        response_json = res.json()
+        task_id = response_json["id"]
+
+        access_token_res = create_access_token(email=email, password=password)
+        access_token_response = access_token_res.json()
+        access_token = access_token_response["access_token"]
+
+        # Prep time
+        now = datetime.now(timezone.utc)
+
+        start_time_dt = now + timedelta(minutes=updated_start_time_mins)
+        updated_start_time = start_time_dt.isoformat().replace("+00:00", "Z")
+
+        update_data = {
+            "start_time": updated_start_time,
+        }
+
+        response = client.patch(
+            f"/tasks/{task_id}",
+            json=update_data,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        assert response.status_code == 400
