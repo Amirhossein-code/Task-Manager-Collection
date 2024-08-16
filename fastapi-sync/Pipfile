@@ -20,5 +20,7 @@ pytz = "*"
 pytest = "*"
 coverage = "*"
 pytest-cov = "*"
+python-multipart = "*"
+httpx = "*"
 
 [dev-packages]

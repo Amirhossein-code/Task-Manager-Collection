@@ -3,8 +3,7 @@ version: "3"
 services:
   db:
     image: postgres:13-alpine
-    container_name: fastapiapp_demodb
-    restart: always
+    container_name: task_manager_db_container
     environment:
       - POSTGRES_DB=$POSTGRES_DB
       - POSTGRES_USER=$POSTGRES_USER
@@ -13,24 +12,30 @@ services:
       - 5433:5432
     networks:
       - fastapiappnetwork
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
 
-  # app:
-  #   build: .
-  #   container_name: fastapiapp_demoapp
-  #   ports:
-  #     - 8000:8000
-  #   volumes:
-  #     - .:/home
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - fastapiappnetwork
-  #   environment:
-  #     - POSTGRES_DB=$POSTGRES_DB
-  #     - POSTGRES_USER=$POSTGRES_USER
-  #     - POSTGRES_HOST=$POSTGRES_HOST
-  #     - POSTGRES_PORT=$POSTGRES_PORT
-  #     - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    container_name: task_manager_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    networks:
+      - fastapiappnetwork
+    env_file:
+      - .env
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
@@ -42,6 +47,10 @@ services:
       - 5050:80
     networks:
       - fastapiappnetwork
+    restart: always
+
+volumes:
+  postgres_data:
 
 networks:
   fastapiappnetwork:

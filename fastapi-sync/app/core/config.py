@@ -4,6 +4,13 @@ from pydantic import Field, ConfigDict
 
 class Settings(BaseSettings):
     database_url: str = Field(...)
+
+    postgres_db: str = Field(...)
+    postgres_user: str = Field(...)
+    postgres_password: str = Field(...)
+    postgres_host: str = Field(...)
+    postgres_port: int = Field(...)
+
     secret_key: str = Field(...)
     algorithm: str = Field(...)
     access_token_expire_minutes: int = Field(30)
@@ -17,11 +24,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-# Access settings through the `settings` instance
-# print(settings.database_url)
-# print(settings.secret_key)
-# print(settings.algorithm)
-# print(settings.access_token_expire_minutes)
-# print(settings.echo_sql)
-# print(settings.test)
