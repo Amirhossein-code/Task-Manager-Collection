@@ -69,7 +69,6 @@ class TestTaskDelete:
         assert task is not None
 
     def test_logged_out_user_deletes_task_returns_401(self, create_task, client):
-        
         res, _ = create_task(
             email="user22@gmail.com",
             password="Halo9980@@#don",

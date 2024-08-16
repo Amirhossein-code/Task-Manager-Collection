@@ -1,11 +1,7 @@
 # Environment variables
-.env 
+# .env 
 
-# alembic
-alembic.ini
-
-##
-
+# Some test generated files 
 task_time_stamps.txt
 
 # Byte-compiled / optimized / DLL files

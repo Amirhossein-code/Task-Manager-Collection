@@ -7,9 +7,9 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
+from ...core.config import settings
 from ...core.database import get_db
 from ...core.security import oauth2_scheme
-from ...core.config import settings
 from ...schemas import token as token_schema
 from ...utils.auth.hashing import Hash
 from ...utils.db import users as user_crud

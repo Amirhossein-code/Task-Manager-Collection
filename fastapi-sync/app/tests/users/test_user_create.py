@@ -23,7 +23,7 @@ class TestUserCreate:
 
         user = db_session.query(User).filter(User.email == email).first()
 
-        # Check the repr 
+        # Check the repr
         assert repr(user) == f"<User: {full_name}>"
 
         assert user is not None

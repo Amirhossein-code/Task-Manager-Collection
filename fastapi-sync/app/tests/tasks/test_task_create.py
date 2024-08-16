@@ -70,19 +70,19 @@ class TestTaskCreate:
         assert finish_time_db.isoformat() == finish_time_iso[:-1]
 
         # Printing the time stamps a good way to understand what is going on
-        with open("task_time_stamps.txt", "a") as file:
-            lines_to_write = [
-                f"start_time at submit is: {start_time_mins_from_now}\n",
-                f"finish_time is: {finish_time_mins_from_now}\n",
-                f"iso format of start_time: {start_time_iso}\n",
-                f"iso format of finish time: {finish_time_iso}\n",
-                f"start_time_db = {start_time_db}\n",
-                f"finish_time_db = {finish_time_db}\n",
-                f"start_time_db = {start_time_db.isoformat()}\n",
-                f"finish_time_db = {finish_time_db.isoformat()}\n\n\n\n\n",
-            ]
+        # with open("task_time_stamps.txt", "a") as file:
+        #     lines_to_write = [
+        #         f"start_time at submit is: {start_time_mins_from_now}\n",
+        #         f"finish_time is: {finish_time_mins_from_now}\n",
+        #         f"iso format of start_time: {start_time_iso}\n",
+        #         f"iso format of finish time: {finish_time_iso}\n",
+        #         f"start_time_db = {start_time_db}\n",
+        #         f"finish_time_db = {finish_time_db}\n",
+        #         f"start_time_db = {start_time_db.isoformat()}\n",
+        #         f"finish_time_db = {finish_time_db.isoformat()}\n\n\n\n\n",
+        #     ]
 
-            file.writelines(lines_to_write)
+        #     file.writelines(lines_to_write)
 
     def test_create_task_with_status_done_returns_422(self, create_task):
         res, _ = create_task(status="done", start_time=10, finish_time=30)

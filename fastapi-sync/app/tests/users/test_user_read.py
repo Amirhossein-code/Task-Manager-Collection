@@ -24,7 +24,7 @@ class TestUserRead:
         # Step 1: Create a user and obtain an access token
         email = "user969@gmail.com"
         password = "90@donER@232md"
-        
+
         create_user_with_token(email=email, password=password)
 
         # Step 2: Update the user's _is_active field to false

@@ -1,5 +1,7 @@
 from fastapi import FastAPI
-from app.api import auth, users, tasks
+
+from app.api import auth, tasks, users
+
 from .core.logging import setup_logging
 
 app = FastAPI()

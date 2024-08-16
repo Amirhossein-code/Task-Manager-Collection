@@ -9,7 +9,6 @@ from ...models import User
 from ...schemas import users as user_schemas
 from ..auth.hashing import Hash
 
-
 logger = logging.getLogger(__name__)
 
 
