@@ -8,3 +8,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: EmailStr | None = None
+
+
+class ResetPassword(BaseModel):
+    email: EmailStr

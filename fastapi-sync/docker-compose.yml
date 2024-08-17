@@ -26,6 +26,7 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - smtp4dev
     volumes:
       - .:/app
     networks:
@@ -47,7 +48,21 @@ services:
       - 5050:80
     networks:
       - fastapiappnetwork
+    depends_on:
+      - app
     restart: always
+
+  smtp4dev:
+    image: rnwood/smtp4dev
+    container_name: smtp4dev
+    ports:
+      - 3000:80
+      - 2525:25
+    environment:
+      - SMTP4DEV_ADMIN_USERNAME=admin
+      - SMTP4DEV_ADMIN_PASSWORD=password
+    networks:
+      - fastapiappnetwork
 
 volumes:
   postgres_data:

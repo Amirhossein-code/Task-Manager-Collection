@@ -42,7 +42,7 @@ class TestAuth:
         assert res.status_code == 401
 
     def test_access_protected_data_with_invalid_token_returns_401(
-        create_user_with_token, client
+        self, create_user_with_token, client
     ):
         create_user_with_token(
             email="user942342@gmail.com",
