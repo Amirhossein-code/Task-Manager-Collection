@@ -24,7 +24,7 @@ This is the **FastAPI** implementation of the Task Manager API. This application
 ### 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/task-manager-api.git
+git clone https://github.com/Amirhossein-code/Task-Manager.git
 cd task-manager-api/fastapi-sync
 ```
 
@@ -51,7 +51,7 @@ docker-compose up --build
 
 ## Testing
 
-The project includes comprehensive integration tests using pytest, achieving over 90% test coverage. The remaining 10% of the code is primarily related to logging and handling edge-case exceptions. These parts are designed to manage unexpected scenarios and ensure proper logging, but they do not directly affect core business logic. While these areas are less frequently triggered and are not directly related to standard functionality, they are essential for robust error handling and logging. Testing these components is possible if needed, but the primary focus remains on core functionality
+The project includes comprehensive integration tests using pytest, achieving over 90% test coverage. The remaining 10% of the code primarily covers logging and handling edge-case exceptions. These parts are designed to manage unexpected scenarios and ensure proper logging, though they don't directly impact the core business logic. Since these scenarios are challenging to reproduce in typical conditions, However, they are crucial for robust error handling and logging. Testing these components is possible if needed, but the primary focus remains on verifying core functionality.
 
 ### Running the tests:
 
@@ -66,6 +66,14 @@ docker exec -it task_manager_app sh
 ```bash
 pytest
 ```
+
+## Developer Experience
+
+Building the Task Manager API with FastAPI was a rewarding experience, especially for a developer transitioning from Django/DRF. The flexibility and speed of FastAPI provided a fresh approach to development, despite its more minimalistic structure compared to Django.
+
+Key learnings included mastering dependency injection, adapting to Pydantic for data validation, and working with SQLAlchemy and Alembic for database interactions. The project went through several refactoring cycles, leading to a clean, scalable structure.
+
+Overall, FastAPI proved to be fast, lightweight, and highly extensible, making it an excellent framework for building modern, maintainable APIs.
 
 ## Contributing
 
