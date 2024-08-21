@@ -28,15 +28,58 @@ git clone https://github.com/Amirhossein-code/Task-Manager.git
 cd task-manager-api/fastapi-sync
 ```
 
-### 2. update .env file values
+### 2. Set Up `.env` File Values
 
-A sample .env file is provided in the project folder. Update the values for your use case. You can generate a new secret key with the following command:
+We will create two environment files: `.env` and `.env.docker`.
+
+#### 1. **.env File**
+
+This file contains the environment variables needed by your FastAPI application. The content should look like this:
+
+```text
+# Database connection
+DATABASE_URL=postgresql://<postgres_user>:<postgres_password>@db:<postgres_port>/<postgres_db>
+
+# Security settings
+SECRET_KEY=your_secret_key_here
+ALGORITHM=HS256
+
+# Token expiration
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# SQLAlchemy settings
+ECHO_SQL=True
+
+# Testing mode
+TEST=False
+```
+
+#### 1. **.env.docker File**
+
+This file is used by Docker services like PostgreSQL, PgAdmin, and SMTP4dev. The content should look like this:
+
+```text
+# Database connection
+POSTGRES_DB=your_database_name
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+# PgAdmin settings
+PGADMIN_EMAIL=admin@email.com
+PGADMIN_PASSWORD=password
+
+# SMTP4dev settings
+SMTP4DEV_ADMIN_USERNAME=admin
+SMTP4DEV_ADMIN_PASSWORD=password
+```
+
+**Note:** You can generate a secret key with the following command:
 
 ```bash
 openssl rand -hex 32
 ```
-
-Be sure to update other values like the PostgreSQL credentials and host information.
 
 ### 3. Run the application with Docker Compose:
 

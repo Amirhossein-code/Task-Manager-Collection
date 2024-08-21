@@ -2,19 +2,21 @@ version: "3"
 
 services:
   db:
-    image: postgres:13-alpine
+    image: postgres:16.4-alpine
     container_name: task_manager_db_container
+    restart: always
+    ports:
+      - 5433:5432
     environment:
       - POSTGRES_DB=$POSTGRES_DB
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-    ports:
-      - 5433:5432
-    networks:
-      - fastapiappnetwork
+    env_file:
+      - .env.docker
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
+    networks:
+      - fastapiappnetwork
 
   app:
     build:
@@ -22,8 +24,12 @@ services:
       dockerfile: ./Dockerfile
 
     container_name: task_manager_app
+    restart: always
     ports:
       - 8000:8000
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
     depends_on:
       - db
       - smtp4dev
@@ -31,36 +37,35 @@ services:
       - .:/app
     networks:
       - fastapiappnetwork
-    env_file:
-      - .env
-    command: >
-      sh -c "alembic upgrade head &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000"
-    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@example.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+    restart: always
     ports:
       - 5050:80
-    networks:
-      - fastapiappnetwork
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=$PGADMIN_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD=$PGADMIN_PASSWORD
+    env_file:
+      - .env.docker
     depends_on:
       - app
-    restart: always
+    networks:
+      - fastapiappnetwork
 
   smtp4dev:
     image: rnwood/smtp4dev
     container_name: smtp4dev
+    restart: always
     ports:
       - 3000:80
       - 2525:25
     environment:
-      - SMTP4DEV_ADMIN_USERNAME=admin
-      - SMTP4DEV_ADMIN_PASSWORD=password
+      - SMTP4DEV_ADMIN_USERNAME=$SMTP4DEV_ADMIN_USERNAME
+      - SMTP4DEV_ADMIN_PASSWORD=$SMTP4DEV_ADMIN_PASSWORD
+    env_file:
+      - .env.docker
     networks:
       - fastapiappnetwork
 

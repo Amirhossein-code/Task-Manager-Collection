@@ -4,13 +4,6 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     database_url: str = Field(...)
-
-    postgres_db: str = Field(...)
-    postgres_user: str = Field(...)
-    postgres_password: str = Field(...)
-    postgres_host: str = Field(...)
-    postgres_port: int = Field(...)
-
     secret_key: str = Field(...)
     algorithm: str = Field(...)
     access_token_expire_minutes: int = Field(30)

@@ -1,15 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-import datetime
 
 from ..core.database import get_db
+from ..models import PasswordResetToken
 from ..schemas import token as token_schema
 from ..utils.auth import authentication
 from ..utils.auth.send_reset_password_email import send_reset_email
 from ..utils.db import users as user_crud
 from ..utils.db.auth import create_password_reset_token
-from ..models import PasswordResetToken, User
 
 router = APIRouter(
     prefix="/auth",
