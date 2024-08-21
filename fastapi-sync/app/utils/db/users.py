@@ -43,6 +43,34 @@ def get_user_by_email_or_404(email: EmailStr, db: Session) -> User:
         )
 
 
+def get_user_by_id_or_404(user_id: int, db: Session) -> User:
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+        return user
+    except SQLAlchemyError as e:
+        logger.error(
+            f"Database error while retrieving user with ID {user_id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="A database error occurred while retrieving the user.",
+        )
+    except Exception as e:
+        logger.error(
+            f"Unexpected error while retrieving user with ID {user_id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while retrieving the user.",
+        )
+
+
 def create_new_user(user_data: user_schemas.UserCreate, db: Session) -> User:
     try:
         existing_user = get_user_by_email(user_data.email, db)
