@@ -2,6 +2,9 @@
 .env 
 .env.docker
 
+# bash file for clearing docker cache
+docker_cache_purge.sh
+
 # Some test generated files 
 task_time_stamps.txt
 

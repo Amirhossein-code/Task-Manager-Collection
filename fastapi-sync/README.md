@@ -67,8 +67,8 @@ POSTGRES_HOST=db
 POSTGRES_PORT=5432
 
 # PgAdmin settings
-PGADMIN_EMAIL=admin@email.com
-PGADMIN_PASSWORD=password
+PGADMIN_DEFAULT_EMAIL=admin@email.com
+PGADMIN_DEFAULT_PASSWORD=password
 
 # SMTP4dev settings
 SMTP4DEV_ADMIN_USERNAME=admin
@@ -84,7 +84,7 @@ openssl rand -hex 32
 ### 3. Run the application with Docker Compose:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 ### 4. Access the application:
