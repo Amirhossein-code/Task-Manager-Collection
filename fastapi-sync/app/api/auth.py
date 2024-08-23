@@ -39,7 +39,7 @@ def login_for_access_token(
 
 @router.post("/request-reset-password")
 def request_reset_password(
-    request: token_schema.ResetPassword, db: Session = Depends(get_db)
+    request: token_schema.RequestResetPassword, db: Session = Depends(get_db)
 ):
     user = user_crud.get_user_by_email_or_404(email=request.email, db=db)
 
@@ -51,7 +51,11 @@ def request_reset_password(
 
 
 @router.post("/reset-password")
-def reset_password(token: str = Query(...), db: Session = Depends(get_db)):
+def reset_password(
+    request: token_schema.ResetPassword,
+    token: str = Query(...),
+    db: Session = Depends(get_db),
+):
     reset_token = db.query(PasswordResetToken).filter_by(token=token).first()
 
     if not reset_token:
@@ -72,7 +76,8 @@ def reset_password(token: str = Query(...), db: Session = Depends(get_db)):
 
     user = user_crud.get_user_by_id_or_404(user_id=reset_token.user_id, db=db)
 
-    user.is_active = True
+    user_crud.reset_user_password(user, request.password, db)
+
     reset_token.is_used = True
     db.commit()
 

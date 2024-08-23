@@ -5,7 +5,6 @@ from email.mime.text import MIMEText
 
 from fastapi import HTTPException
 
-
 SMTP_SERVER = "smtp4dev"
 SMTP_PORT = 25
 SENDER_EMAIL = "noreply@example.com"
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def send_reset_email(to_email: str, token: str):
     subject = "Password Reset Request"
-    body = f"Click the link to reset your password: http://{SMTP_SERVER}:8000/reset-password?token={token}"
+    body = f"Click the link to reset your password: http://0.0.0.0:8000/reset-password?token={token}"
 
     # Create the email message
     msg = MIMEMultipart()

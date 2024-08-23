@@ -110,6 +110,40 @@ def create_new_user(user_data: user_schemas.UserCreate, db: Session) -> User:
         )
 
 
+def reset_user_password(user: User, new_password: str, db: Session) -> User:
+    try:
+        hashed_password = Hash.hash_password(password=new_password)
+
+        user.hashed_password = hashed_password
+
+        db.commit()
+        db.refresh(user)
+        return user
+    except HTTPException as http_exec:
+        raise http_exec
+
+    except SQLAlchemyError as e:
+        db.rollback()
+        logger.error(
+            f"Database error while resetting password for user {user.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="A database error occurred while resetting the password.",
+        )
+    except Exception as e:
+        db.rollback()
+        logger.error(
+            f"Unexpected error while resetting password for user {user.id}: {e}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while resetting the password.",
+        )
+
+
 def update_user(
     user: User,
     update_data: user_schemas.UserUpdate,

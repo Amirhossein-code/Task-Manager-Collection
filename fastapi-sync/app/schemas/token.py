@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from ..utils.auth.password_validators import ValidatedPassword
 
 
 class Token(BaseModel):
@@ -10,5 +11,9 @@ class TokenData(BaseModel):
     email: EmailStr | None = None
 
 
-class ResetPassword(BaseModel):
+class RequestResetPassword(BaseModel):
     email: EmailStr
+
+
+class ResetPassword(BaseModel):
+    password: ValidatedPassword
