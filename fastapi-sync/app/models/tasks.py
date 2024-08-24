@@ -1,4 +1,5 @@
 import enum
+from datetime import datetime, timezone
 
 import pytz
 from sqlalchemy import (
@@ -11,7 +12,6 @@ from sqlalchemy import (
     event,
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from ..core.database import Base
 
@@ -45,8 +45,8 @@ class Task(Base):
     finish_time = Column(DateTime(timezone=True), nullable=True)
 
     # Time Stamps
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+    time_created = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
+    time_updated = Column(DateTime(timezone=True), onupdate=datetime.now(timezone.utc))
 
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="tasks")

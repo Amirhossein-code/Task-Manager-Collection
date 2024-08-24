@@ -56,13 +56,16 @@ def reset_password(
     db: Session = Depends(get_db),
 ):
     reset_token = auth_db.retrieve_password_reset_token(password_reset_token, db)
-    auth_db.validate_password_reset_token(password_reset_token)
+    if not reset_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+        )
+    validated_reset_token = auth_db.validate_password_reset_token(reset_token)
 
-    user = user_crud.get_user_by_id_or_404(user_id=reset_token.user_id, db=db)
+    user = user_crud.get_user_by_id_or_404(user_id=validated_reset_token.user_id, db=db)
 
-    with db.begin():
-        user_crud.reset_user_password(user, request.password, db)
-        reset_token.is_used = True
-        db.commit()
+    user_crud.reset_user_password(user, request.password, db)
+    validated_reset_token.is_used = True
+    db.commit()
 
     return {"message": "Password reset successfully."}

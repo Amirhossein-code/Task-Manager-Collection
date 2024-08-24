@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -7,7 +9,6 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from ..core.database import Base
 
@@ -21,9 +22,11 @@ class User(Base):
     full_name = Column(String(225), nullable=False)
     is_active = Column(Boolean, default=True)
 
-    created_at = Column(DateTime(timezone=True), default=func.now())
+    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     last_updated = Column(
-        DateTime(timezone=True), default=func.now(), onupdate=func.now()
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
+        onupdate=datetime.now(timezone.utc),
     )
 
     UniqueConstraint("email", name="uq_user_email")

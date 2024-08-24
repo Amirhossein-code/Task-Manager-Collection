@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_user_by_email(email: EmailStr, db: Session) -> User:
-    return db.query(User).filter(User.email == email).first()
+    user = db.query(User).filter(User.email == email).first()
+    return user
 
 
 def get_user_by_email_or_404(email: EmailStr, db: Session) -> User:

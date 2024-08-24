@@ -24,15 +24,14 @@ def create_password_reset_token(user_id: int, db: Session):
 
 def retrieve_password_reset_token(token: str, db: Session):
     reset_token = db.query(PasswordResetToken).filter_by(token=token).first()
-    return reset_token
-
-
-def validate_password_reset_token(reset_token: PasswordResetToken):
     if not reset_token:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
         )
+    return reset_token
 
+
+def validate_password_reset_token(reset_token: PasswordResetToken):
     if reset_token.is_used:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -40,11 +39,11 @@ def validate_password_reset_token(reset_token: PasswordResetToken):
         )
 
     now = datetime.now(timezone.utc)
-    now_iso = now.isoformat().replace("+00:00", "Z")
 
-    if reset_token.expires_at.isoformat() < now_iso[:-1]:
+    print(f"\n\n\n\n\n now:{now} \n reset_token:{reset_token.expires_at} \n\n\n\n\n\n")
+    if reset_token.expires_at < now:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Token has expired"
         )
 
-    return
+    return reset_token
