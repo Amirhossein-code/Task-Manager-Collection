@@ -1,19 +1,7 @@
-version: '3'
+version: "3"
 services:
-  db:
-    image: mysql:8.3.0
-    container_name: restaurant_db
-    restart: always
-    volumes:
-      - data:/var/lib/mysql
-    env_file:
-      - ./.env
-    ports:
-      - "3307:3306"
-
-  
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: django
@@ -25,19 +13,6 @@ services:
       - "8000:8000"
     env_file:
       - ./.env
-    depends_on:
-      - db
-
-  # frontend:
-  #   build: 
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: react
-  #   restart: always
-  #   volumes:
-  #     - ./frontend:/app
-  #   ports:
-  #     - "5173:5173"
 
   smtp4dev:
     image: rnwood/smtp4dev
@@ -45,6 +20,6 @@ services:
     ports:
       - "3000:80"
       - "2525:25"
-      
+
 volumes:
   data:

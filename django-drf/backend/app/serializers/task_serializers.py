@@ -18,12 +18,7 @@ class DetailedTaskSerializer(serializers.ModelSerializer):
             "created_at",
             "last_updated",
         ]
-        read_only_fields = [
-            "id",
-            "individual",
-            "created_at",
-            "last_updated",
-        ]
+        read_only_fields = ["__all__"]
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -39,9 +34,6 @@ class TaskSerializer(serializers.ModelSerializer):
             "start_time",
             "finish_time",
         ]
-        read_only_fields = [
-            "id",
-        ]
 
 
 class CreateTaskSerializer(serializers.ModelSerializer):
@@ -51,11 +43,26 @@ class CreateTaskSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
-            "priority",
-            "category",
             "start_time",
             "finish_time",
+            "priority",
+            "category",
         ]
-        read_only_fields = [
-            "id",
-        ]
+
+    def validate(self, data):
+        request = self.context["request"]
+        start_time = data.get("start_time")
+        finish_time = data.get("finish_time")
+        category = data.get("category")
+
+        # Validate start and finish time
+        if start_time and finish_time and finish_time <= start_time:
+            raise serializers.ValidationError(
+                "Finish time must be later than start time."
+            )
+
+        # Validate if the category belongs to the authenticated user
+        if category and category.individual != request.user.individual:
+            raise serializers.ValidationError("You do not own this category.")
+
+        return data
