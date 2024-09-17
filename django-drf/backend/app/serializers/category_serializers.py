@@ -9,11 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
             "id",
             "individual",
             "title",
-            "slug",
-            "image",
         ]
         read_only_fields = [
-            "id",
             "individual",
-            "slug",
         ]

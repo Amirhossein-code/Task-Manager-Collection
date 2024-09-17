@@ -4,9 +4,7 @@ from .task_serializers import (
     CreateTaskSerializer,
 )
 from .category_serializers import CategorySerializer
-from .resource_serializer import ResourceSerializer
-from .prequisite_serializers import PrequisiteSerialzier
-from .individual_serialziers import (
+from .individual_serializers import (
     SimpleIndividualSerializer,
     UpdateIndividualSerializer,
     IndividualSerializer,

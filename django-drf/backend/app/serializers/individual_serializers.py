@@ -14,7 +14,6 @@ class UpdateIndividualSerializer(serializers.ModelSerializer):
             "last_name",
             "phone",
             "birth_date",
-            "image",
         ]
 
 
@@ -57,7 +56,6 @@ class IndividualSerializer(serializers.ModelSerializer):
             "phone",
             "joined_at",
             "last_updated",
-            "image",
         ]
         read_only_fields = [
             "id",
