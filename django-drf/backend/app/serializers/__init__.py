@@ -4,8 +4,3 @@ from .task_serializers import (
     CreateTaskSerializer,
 )
 from .category_serializers import CategorySerializer
-from .individual_serializers import (
-    SimpleIndividualSerializer,
-    UpdateIndividualSerializer,
-    IndividualSerializer,
-)

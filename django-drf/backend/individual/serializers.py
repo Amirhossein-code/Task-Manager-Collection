@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Individual
+from .models import Individual
 
 
 class UpdateIndividualSerializer(serializers.ModelSerializer):

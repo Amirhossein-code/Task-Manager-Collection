@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from .category import Category
-from .individual import Individual
+from individual.models import Individual
 
 
 class Task(models.Model):

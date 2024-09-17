@@ -6,13 +6,13 @@ from rest_framework.permissions import (
     IsAdminUser,
 )
 from rest_framework import status
-from ..models import Individual
-from ..serializers import (
+from .models import Individual
+from .serializers import (
     IndividualSerializer,
     UpdateIndividualSerializer,
     SimpleIndividualSerializer,
 )
-from ..permissions import IsOwner
+from .permissions import IsOwner
 
 
 class IndividualViewSet(ModelViewSet):

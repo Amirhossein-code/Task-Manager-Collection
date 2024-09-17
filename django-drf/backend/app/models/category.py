@@ -1,5 +1,5 @@
 from django.db import models
-from .individual import Individual
+from individual.models import Individual
 
 
 class Category(models.Model):
