@@ -14,10 +14,3 @@ class PasswordResetToken(models.Model):
     def save(self, *args, **kwargs):
         self.expires_at = timezone.now() + timedelta(minutes=10)
         super(PasswordResetToken, self).save(*args, **kwargs)
-
-
-"""
-{
-    "email": "12@gmail.com"
-}
-"""

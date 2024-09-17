@@ -6,4 +6,4 @@ class IndividualConfig(AppConfig):
     name = "individual"
 
     def ready(self):
-        import app.signals
+        import individual.signals

@@ -1,5 +1,8 @@
-from .common import *
+import os
+
 from dotenv import load_dotenv
+
+from .common import *
 
 load_dotenv()
 

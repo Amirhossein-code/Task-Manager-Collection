@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from ..models import user
-from app.models import Individual
+from individual.models import Individual
 
 
 class IndividualInline(admin.StackedInline):
