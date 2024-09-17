@@ -63,4 +63,4 @@ class Task(models.Model):
         super(Task, self).save(*args, **kwargs)
 
     class Meta:
-        verbose_name_plural = "Tasks"
+        verbose_name_plural = "1. Tasks"
