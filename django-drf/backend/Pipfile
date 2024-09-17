@@ -8,7 +8,7 @@ django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 drf-nested-routers = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 django-autoslug = "*"
 pillow = "*"
 django-filter = "*"
@@ -21,4 +21,4 @@ django-debug-toolbar = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"
