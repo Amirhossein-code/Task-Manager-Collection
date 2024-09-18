@@ -121,17 +121,12 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = []
 
 
-# EMail Backend
+# Email Backend
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "localhost"
+EMAIL_HOST = "smtp4dev"
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
-EMAIL_PORT = 2525
+EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = "amir@gmail.com"
 
 ADMINS = [("Amir", "amir@gmail.com")]
-
-# Celery
-# CELERY_BROKER_URL = "redis://localhost:6379/1"
-
-FRONTEND_URL = "http://localhost"

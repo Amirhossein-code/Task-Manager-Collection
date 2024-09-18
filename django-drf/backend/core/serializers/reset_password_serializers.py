@@ -1,4 +1,3 @@
-from ..models import user
 from rest_framework import serializers
 
 

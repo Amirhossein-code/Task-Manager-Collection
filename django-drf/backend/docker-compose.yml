@@ -2,17 +2,17 @@ version: "3"
 services:
   backend:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     container_name: django
     command: sh -c "python manage.py runserver 0.0.0.0:8000"
     restart: always
     volumes:
-      - ./backend:/app
+      - .:/app
+    depends_on:
+      - smtp4dev
     ports:
       - "8000:8000"
-    env_file:
-      - ./.env
 
   smtp4dev:
     image: rnwood/smtp4dev
@@ -20,6 +20,8 @@ services:
     ports:
       - "3000:80"
       - "2525:25"
+    env_file:
+      - ./.env
 
 volumes:
   data:

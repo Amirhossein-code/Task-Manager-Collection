@@ -1,12 +1,13 @@
-from rest_framework import status
-from rest_framework.response import Response
 from django.utils import timezone
-from ..models import User
+from rest_framework import status
+from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+from ..models import PasswordResetToken
 from ..serializers import (
     ResetPasswordSerializer,
 )
-from rest_framework.generics import GenericAPIView
-from ..models import PasswordResetToken
 
 
 class ResetPasswordView(GenericAPIView):
@@ -18,6 +19,7 @@ class ResetPasswordView(GenericAPIView):
     """
 
     serializer_class = ResetPasswordSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, token):
         serializer = self.get_serializer(data=request.data)
