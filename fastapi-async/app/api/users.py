@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..core.database import get_db
+from ..core.database import get_db_session
 from ..dependencies.get_active_user import get_current_active_user_db_dependency
 from ..models import User
 from ..schemas import users as user_schemas
@@ -16,15 +16,17 @@ router = APIRouter(
 @router.post(
     "/", response_model=user_schemas.UserDisplay, status_code=status.HTTP_201_CREATED
 )
-def sign_up(user_data: user_schemas.UserCreate, db: Session = Depends(get_db)):
-    new_user = user_crud.create_new_user(user_data=user_data, db=db)
+async def sign_up(
+    user_data: user_schemas.UserCreate, db: AsyncSession = Depends(get_db_session)
+):
+    new_user = await user_crud.create_new_user(user_data=user_data, db=db)
     return new_user
 
 
 @router.get(
     "/me", response_model=user_schemas.UserDisplay, status_code=status.HTTP_200_OK
 )
-def get_logged_in_user(
+async def get_logged_in_user(
     user: User = Depends(get_current_active_user_db_dependency),
 ):
     return user
@@ -33,12 +35,12 @@ def get_logged_in_user(
 @router.put(
     "/me", response_model=user_schemas.UserDisplay, status_code=status.HTTP_200_OK
 )
-def put_logged_in_user(
+async def put_logged_in_user(
     update_data: user_schemas.UserUpdate,
     user: User = Depends(get_current_active_user_db_dependency),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
 ):
-    updated_user = user_crud.update_user(
+    updated_user = await user_crud.update_user(
         user=user, update_data=update_data, db=db, full_update=True
     )
     return updated_user
@@ -47,21 +49,21 @@ def put_logged_in_user(
 @router.patch(
     "/me", response_model=user_schemas.UserDisplay, status_code=status.HTTP_200_OK
 )
-def patch_logged_in_user(
+async def patch_logged_in_user(
     update_data: user_schemas.UserUpdate,
     user: User = Depends(get_current_active_user_db_dependency),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
 ):
-    updated_user = user_crud.update_user(
+    updated_user = await user_crud.update_user(
         user=user, update_data=update_data, db=db, full_update=False
     )
     return updated_user
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
-def delete_logged_in_user(
+async def delete_logged_in_user(
     user: User = Depends(get_current_active_user_db_dependency),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
 ):
-    user_crud.delete_user(user=user, db=db)
+    await user_crud.delete_user(user=user, db=db)
     return None

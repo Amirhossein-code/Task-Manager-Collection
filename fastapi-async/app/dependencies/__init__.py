@@ -1,1 +1,1 @@
-from .database_session_dependency import DBSessionDep
+from .get_active_user import get_current_active_user_db_dependency

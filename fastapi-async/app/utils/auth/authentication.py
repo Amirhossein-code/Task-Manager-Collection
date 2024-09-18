@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...core.config import settings
 from ...core.security import oauth2_scheme
-from ...dependencies import DBSessionDep
+from ...core.database import get_db_session
 from ...schemas import token as token_schema
 from ...utils.auth.hashing import Hash
 from ...utils.db import users as user_crud
@@ -38,7 +38,7 @@ async def create_access_token(data: dict) -> str:
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: AsyncSession = Depends(DBSessionDep),
+    db: AsyncSession = Depends(get_db_session),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

@@ -1,10 +1,10 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..core.database import get_db
-from ..dependencies.get_active_user import get_current_active_user_db_dependency
+from ..core.database import get_db_session
+from ..dependencies import get_current_active_user_db_dependency
 from ..models import User
 from ..schemas import tasks as task_schemas
 from ..utils.db import tasks as task_crud
@@ -16,12 +16,12 @@ router = APIRouter(
 
 
 @router.post("/", response_model=task_schemas.Task, status_code=status.HTTP_201_CREATED)
-def create_task(
+async def create_task(
     request: task_schemas.TaskCreate,
     user: User = Depends(get_current_active_user_db_dependency),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
 ):
-    new_task = task_crud.create_new_task(
+    new_task = await task_crud.create_new_task(
         request=request,
         user=user,
         db=db,
@@ -30,11 +30,11 @@ def create_task(
 
 
 @router.get("/", response_model=List[task_schemas.Task], status_code=status.HTTP_200_OK)
-def get_users_tasks(
-    db: Session = Depends(get_db),
+async def get_users_tasks(
+    db: AsyncSession = Depends(get_db_session),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
-    tasks = task_crud.get_user_tasks(
+    tasks = await task_crud.get_user_tasks(
         user=user,
         db=db,
     )
@@ -44,12 +44,12 @@ def get_users_tasks(
 @router.get(
     "/{task_id}", response_model=task_schemas.Task, status_code=status.HTTP_200_OK
 )
-def get_task_by_id(
+async def get_task_by_id(
     task_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
-    task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+    task = await task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
 
     if task.owner_id != user.id:
         raise HTTPException(
@@ -62,13 +62,13 @@ def get_task_by_id(
 @router.put(
     "/{task_id}", response_model=task_schemas.Task, status_code=status.HTTP_200_OK
 )
-def put_update_task(
+async def put_update_task(
     task_id: int,
     update_task_data: task_schemas.TaskUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
-    task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+    task = await task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
 
     if task.owner_id != user.id:
         raise HTTPException(
@@ -76,7 +76,7 @@ def put_update_task(
             detail="Not authorized to update this task",
         )
 
-    updated_task = task_crud.update_task(
+    updated_task = await task_crud.update_task(
         task=task,
         update_data=update_task_data,
         db=db,
@@ -87,13 +87,13 @@ def put_update_task(
 
 
 @router.patch("/{task_id}", response_model=task_schemas.Task)
-def patch_update_task(
+async def patch_update_task(
     task_id: int,
     update_task_data: task_schemas.TaskUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
-    task = task_crud.get_task_by_id_or_404(task_id, db)
+    task = await task_crud.get_task_by_id_or_404(task_id, db)
 
     if task.owner_id != user.id:
         raise HTTPException(
@@ -101,7 +101,7 @@ def patch_update_task(
             detail="Not authorized to delete this task",
         )
 
-    updated_task = task_crud.update_task(
+    updated_task = await task_crud.update_task(
         task=task, update_data=update_task_data, db=db, full_update=False
     )
 
@@ -109,12 +109,12 @@ def patch_update_task(
 
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_task(
+async def delete_task(
     task_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     user: User = Depends(get_current_active_user_db_dependency),
 ):
-    task = task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
+    task = await task_crud.get_task_by_id_or_404(task_id=task_id, db=db)
 
     if task.owner_id != user.id:
         raise HTTPException(
@@ -122,6 +122,6 @@ def delete_task(
             detail="Not authorized to delete this task",
         )
 
-    task_crud.delete_task(task=task, db=db)
+    await task_crud.delete_task(task=task, db=db)
 
     return None
