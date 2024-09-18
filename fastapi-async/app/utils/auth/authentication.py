@@ -5,18 +5,18 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from jwt.exceptions import InvalidTokenError
 from pydantic import EmailStr
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...core.config import settings
-from ...core.database import get_db
 from ...core.security import oauth2_scheme
+from ...dependencies import DBSessionDep
 from ...schemas import token as token_schema
 from ...utils.auth.hashing import Hash
 from ...utils.db import users as user_crud
 
 
-def authenticate_user(db: Session, email: EmailStr, password: str):
-    user = user_crud.get_user_by_email(email, db)
+async def authenticate_user(db: AsyncSession, email: EmailStr, password: str):
+    user = await user_crud.get_user_by_email(email, db)
     if not user:
         return False
     if not Hash.validate_password(password, user.hashed_password):
@@ -24,7 +24,7 @@ def authenticate_user(db: Session, email: EmailStr, password: str):
     return user
 
 
-def create_access_token(data: dict) -> str:
+async def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=int(settings.access_token_expire_minutes)
@@ -36,8 +36,9 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
+async def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    db: AsyncSession = Depends(DBSessionDep),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -54,7 +55,8 @@ def get_current_user(
         token_data = token_schema.TokenData(email=email)
     except InvalidTokenError:
         raise credentials_exception
-    user = user_crud.get_user_by_email(email=token_data.email, db=db)
+
+    user = await user_crud.get_user_by_email(email=token_data.email, db=db)
     if user is None:
         raise credentials_exception
 

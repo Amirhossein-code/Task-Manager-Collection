@@ -1,198 +1,82 @@
-import logging
-
 from fastapi import HTTPException, status
 from pydantic import EmailStr
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...models import User
 from ...schemas import users as user_schemas
 from ..auth.hashing import Hash
 
-logger = logging.getLogger(__name__)
 
-
-def get_user_by_email(email: EmailStr, db: Session) -> User:
-    user = db.query(User).filter(User.email == email).first()
+async def get_user_by_email(email: EmailStr, db: AsyncSession) -> User:
+    user = await db.query(User).filter(User.email == email).first()
     return user
 
 
-def get_user_by_email_or_404(email: EmailStr, db: Session) -> User:
-    try:
-        user = get_user_by_email(email, db)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
-        return user
-    except HTTPException as http_exec:
-        raise http_exec
-    except SQLAlchemyError as e:
-        logger.error(
-            f"Database error while retrieving user with email {email}: {e}",
-            exc_info=True,
-        )
+async def get_user_by_email_or_404(email: EmailStr, db: AsyncSession) -> User:
+    user = await get_user_by_email(email, db)
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while retrieving the user.",
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    except Exception as e:
-        logger.error(f"Unexpected error while retrieving user: {e}", exc_info=True)
+    return user
+
+
+async def get_user_by_id_or_404(user_id: int, db: AsyncSession) -> User:
+    user = await db.query(User).filter(User.id == user_id).first()
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while retrieving the user.",
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
+    return user
 
 
-def get_user_by_id_or_404(user_id: int, db: Session) -> User:
-    try:
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
-        return user
-    except SQLAlchemyError as e:
-        logger.error(
-            f"Database error while retrieving user with ID {user_id}: {e}",
-            exc_info=True,
-        )
+async def create_new_user(user_data: user_schemas.UserCreate, db: AsyncSession) -> User:
+    existing_user = await get_user_by_email(user_data.email, db)
+    if existing_user:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while retrieving the user.",
-        )
-    except Exception as e:
-        logger.error(
-            f"Unexpected error while retrieving user with ID {user_id}: {e}",
-            exc_info=True,
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while retrieving the user.",
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use"
         )
 
+    hashed_password = Hash.hash_password(password=user_data.password)
 
-def create_new_user(user_data: user_schemas.UserCreate, db: Session) -> User:
-    try:
-        existing_user = get_user_by_email(user_data.email, db)
-        if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Email already in use"
-            )
+    new_user = User(
+        email=user_data.email,
+        hashed_password=hashed_password,
+        full_name=user_data.full_name,
+    )
 
-        hashed_password = Hash.hash_password(password=user_data.password)
-
-        new_user = User(
-            email=user_data.email,
-            hashed_password=hashed_password,
-            full_name=user_data.full_name,
-        )
-
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-        return new_user
-    except HTTPException as http_exec:
-        raise http_exec
-
-    except SQLAlchemyError as e:
-        db.rollback()
-        logger.error(f"Database error while creating new user: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while creating a new user.",
-        )
-    except Exception as e:
-        db.rollback()
-        logger.error(f"Unexpected error while creating user: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while creating the user.",
-        )
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return new_user
 
 
-def reset_user_password(user: User, new_password: str, db: Session) -> User:
-    try:
-        hashed_password = Hash.hash_password(password=new_password)
+async def reset_user_password(user: User, new_password: str, db: AsyncSession) -> User:
+    hashed_password = Hash.hash_password(password=new_password)
 
-        user.hashed_password = hashed_password
+    user.hashed_password = hashed_password
 
-        db.commit()
-        db.refresh(user)
-        return user
-    except HTTPException as http_exec:
-        raise http_exec
-
-    except SQLAlchemyError as e:
-        db.rollback()
-        logger.error(
-            f"Database error while resetting password for user {user.id}: {e}",
-            exc_info=True,
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while resetting the password.",
-        )
-    except Exception as e:
-        db.rollback()
-        logger.error(
-            f"Unexpected error while resetting password for user {user.id}: {e}",
-            exc_info=True,
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while resetting the password.",
-        )
+    await db.commit()
+    await db.refresh(user)
+    return user
 
 
-def update_user(
+async def update_user(
     user: User,
     update_data: user_schemas.UserUpdate,
-    db: Session,
+    db: AsyncSession,
     full_update: bool,  # True -> PUT | False -> Patch
 ) -> User:
-    try:
-        data_to_update = update_data.model_dump(exclude_unset=not full_update)
-        for key, value in data_to_update.items():
-            setattr(user, key, value)
-        db.commit()
-        db.refresh(user)
-        return user
-    except SQLAlchemyError as e:
-        db.rollback()
-        logger.error(
-            f"Database error while updating user with ID {user.id}: {e}", exc_info=True
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while updating the user.",
-        )
-    except Exception as e:
-        db.rollback()
-        logger.error(f"Unexpected error while updating user: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while updating the user.",
-        )
+    data_to_update = update_data.model_dump(exclude_unset=not full_update)
+
+    for key, value in data_to_update.items():
+        setattr(user, key, value)
+
+    await db.commit()
+    await db.refresh(user)
+    return user
 
 
-def delete_user(user: User, db: Session) -> None:
-    try:
-        db.delete(user)
-        db.commit()
-    except SQLAlchemyError as e:
-        db.rollback()
-        logger.error(
-            f"Database error while deleting user with ID {user.id}: {e}", exc_info=True
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A database error occurred while deleting the user.",
-        )
-    except Exception as e:
-        db.rollback()
-        logger.error(f"Unexpected error while deleting user: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred while deleting the user.",
-        )
+async def delete_user(user: User, db: AsyncSession) -> None:
+    await db.delete(user)
+    await db.commit()

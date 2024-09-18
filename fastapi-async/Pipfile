@@ -19,5 +19,6 @@ pytz = "*"
 pytest = "*"  
 python-multipart = "*"  
 httpx = "*" 
+aiosmtplib = "*"
 
 [dev-packages]

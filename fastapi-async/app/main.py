@@ -1,13 +1,12 @@
+from contextlib import asynccontextmanager
+
+import uvicorn
+from core.database import sessionmanager
 from fastapi import FastAPI
 
 from app.api import auth, tasks, users
 
 from .core.logging import setup_logging
-
-from contextlib import asynccontextmanager
-
-import uvicorn
-from core.database import sessionmanager
 
 
 @asynccontextmanager
@@ -18,7 +17,6 @@ async def lifespan(app: FastAPI):
     """
     yield
     if sessionmanager._engine is not None:
-        # Close the DB connection
         await sessionmanager.close()
 
 
