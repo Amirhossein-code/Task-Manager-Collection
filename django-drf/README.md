@@ -1,44 +1,57 @@
-# ⚖️ Task Manager
+# ⚖️ Task Manager API
 
 ### 🔺 Description
 
-The Task Manager is a user-friendly application that helps users efficiently manage their tasks by defining tasks, setting prerequisites, and allocating necessary resources.
-
-##
+The Task Manager API is a RESTful application that allows users to efficiently manage their tasks. Users can create, categorize, and manage tasks, ensuring their workloads are organized and manageable. This API also includes secure user authentication and password reset functionality.
 
 ### 🔺 Features
 
-- **User Authentication:** Secure login and sign up using email and password credentials.
-- **Task Management:** Define tasks based on individual requirements.
-- **Prerequisites:** Set task prerequisites for proper sequencing and dependencies.
-- **Resource Allocation:** Allocate resources to tasks for smooth execution.
-- **Task Privacy:** Keep each user's tasks private and visible only to themselves.
-
-##
-
-### :accessibility: Authentication
-
-The Task Manager uses a custom authentication backend supporting email and password authentication. It employs JWT authentication with Simple JWT for secure and seamless user authentication.
-
-**🉑 Resetting Password**
-
-- Users initiate password reset by providing their email.
-- An email with a reset link is sent to the user's email address.
-- Users click the link to enter a new password and reset it.
-- Token in the link authenticates the user for password reset.
-
-##
+- **Task Management:** Define tasks based on individual requirements and categorize them.
+- **User Authentication:** Secure login and sign-up using email and password credentials.
+- **Resetting Password:** Reset passwords via email.
 
 ### ⚙️ Tech Stack Used
 
-**🌀 Backend:** Python, Django, Django Rest Framework, Smtp4dev, Docker, PostgreSQL
+Python, Django, Django Rest Framework, Smtp4dev, Docker, PostgreSQL
 
-##
+### 📦 Getting Started
 
-### Features to be Implemented
+#### 1. Clone the repo
 
-**The following features will be implemented in the project:**
+```bash
+git clone https://github.com/Amirhossein-code/Task-Manager.git
+cd task-manager-api/django-drf
+```
 
-- Users can define organizations.
-- Users can associate registered members with organizations and assign them a role.
-- Organization owners can create tasks for the organization and assign them to one or more associated members.
+### 2. Set Up `.env` File
+
+```text
+# Djnago
+SECRET_KEY=secret_key
+DJANGO_ALLOWED_HOSTS=localhost
+
+# DataBase
+POSTGRES_DB=postgres_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres_pass
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+# SMTP4dev
+SMTP4DEV_ADMIN_USERNAME=admin
+SMTP4DEV_ADMIN_PASSWORD=pass12345
+
+
+# PgAdmin
+PGADMIN_DEFAULT_EMAIL=admin@email.com
+PGADMIN_DEFAULT_PASSWORD=12345
+
+```
+
+**Note:** You can get a new secret key from `https://djecrety.ir/`
+
+### 3. Run the application with Docker Compose:
+
+```bash
+docker compose up --build
+```
