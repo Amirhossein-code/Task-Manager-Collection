@@ -1,4 +1,4 @@
-# ⚖️ Task Manager API
+# Task Manager API
 
 ### 🔺 Description
 
@@ -12,7 +12,7 @@ The Task Manager API is a RESTful application that allows users to efficiently m
 
 ### ⚙️ Tech Stack Used
 
-Python, Django, Django Rest Framework, Smtp4dev, Docker, PostgreSQL
+Python, Django, Django Rest Framework, Smtp4dev, Docker, PostgreSQL, Gunicorn
 
 ### 📦 Getting Started
 

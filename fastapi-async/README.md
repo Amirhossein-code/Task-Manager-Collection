@@ -1,4 +1,4 @@
-# Task Manager API (FastAPI-sync)
+# Task Manager API (FastAPI-Async)
 
 This is the **FastAPI** implementation of the Task Manager API. This application handles user authentication and task management using **JWT tokens** with **stateless** authentication. Each user has control over their own tasks, ensuring that tasks remain private and secure.
 
@@ -91,33 +91,3 @@ docker compose up --build
 
 - FastAPI Swagger UI: `http://localhost:8000/docs`
 - pgAdmin: `http://localhost:5050` (Login with admin@example.com / admin)
-
-## Testing
-
-The project includes comprehensive integration tests using pytest, achieving over 90% test coverage. The remaining 10% of the code primarily covers logging and handling edge-case exceptions. These parts are designed to manage unexpected scenarios and ensure proper logging, though they don't directly impact the core business logic. Since these scenarios are challenging to reproduce in typical conditions, However, they are crucial for robust error handling and logging. Testing these components is possible if needed, but the primary focus remains on verifying core functionality.
-
-### Running the tests:
-
-#### 1. access the application container:
-
-```bash
-docker exec -it task_manager_app sh
-```
-
-#### 2. Run the tests:
-
-```bash
-pytest
-```
-
-## Dev Experience
-
-Building the Task Manager API with FastAPI was a rewarding experience, especially for a developer transitioning from Django/DRF. The flexibility and speed of FastAPI provided a fresh approach to development, despite its more minimalistic structure compared to Django.
-
-Key learnings included mastering dependency injection, adapting to Pydantic for data validation, and working with SQLAlchemy and Alembic for database interactions. The project went through several refactoring cycles, leading to a clean, scalable structure.
-
-Overall, FastAPI proved to be fast, lightweight, and highly extensible, making it an excellent framework for building modern, maintainable APIs.
-
-## Contributing
-
-Thank you for your interest in contributing to the Task Manager API (FastAPI-sync)! This project aims to provide a foundational API with essential features like user authentication, CRUD operations for users, and basic task management. It serves as a starting point for a FastAPI-based application, incorporating simple authentication, user management, and task functionality. If you'd like to contribute to this project, please feel free to fork the repository, create a branch, and submit a pull request. Any contributions are welcome!
