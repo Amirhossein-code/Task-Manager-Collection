@@ -16,6 +16,8 @@ class ResetPasswordView(GenericAPIView):
     they are redirected to an endpoint with the token avaiable in the url
     here we authenticate the token and ask the user to enter new password
     then we update the password and user can login with this password
+
+    Token is entered as query parameter and the password as body.
     """
 
     serializer_class = ResetPasswordSerializer

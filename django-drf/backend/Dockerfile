@@ -1,18 +1,23 @@
-FROM python:3.12-alpine
+FROM python:3.12-alpine  
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Prevent Python from writing .pyc files to disc  
+ENV PYTHONDONTWRITEBYTECODE 1  
+# Set the buffering policy for stdout and stderr  
+ENV PYTHONUNBUFFERED 1  
 
-WORKDIR /app
+# Set the working directory in the container  
+WORKDIR /app  
 
-COPY requirements.txt .
+# Copy requirements file and install dependencies  
+COPY requirements.txt .  
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt  
 
-COPY entrypoint.sh /app/entrypoint.sh
+# Copy the entire application into the container  
+COPY . .  
 
-COPY . .
+# Expose the port that the application runs on  
+EXPOSE 8000  
 
-EXPOSE 8000
-
+# Set the entrypoint to the entrypoint script  
 ENTRYPOINT ["sh", "/app/entrypoint.sh"]

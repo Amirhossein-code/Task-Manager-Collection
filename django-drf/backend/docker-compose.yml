@@ -1,27 +1,51 @@
 version: "3"
 services:
+  db:
+    image: postgres:16.4-alpine
+    container_name: task_manager_db_container
+    restart: always
+    ports:
+      - 5433:5432
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - drfnetwork
+
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: django
-    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: gunicorn API.wsgi:application --bind 0.0.0.0:8000 --log-level debug
     restart: always
     volumes:
       - .:/app
+    env_file:
+      - .env
     depends_on:
+      - db
       - smtp4dev
     ports:
       - "8000:8000"
+    networks:
+      - drfnetwork
 
   smtp4dev:
     image: rnwood/smtp4dev
     container_name: smtp4dev
-    ports:
-      - "3000:80"
-      - "2525:25"
+    restart: always
     env_file:
-      - ./.env
+      - .env
+    ports:
+      - 3000:80
+      - 2525:25
+    networks:
+      - drfnetwork
 
 volumes:
-  data:
+  postgres_data:
+
+networks:
+  drfnetwork:
