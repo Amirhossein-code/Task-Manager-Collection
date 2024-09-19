@@ -80,6 +80,7 @@ async def put_update_task(
     updated_task = await task_crud.update_task(
         task=task,
         update_data=request,
+        user=user,
         db=db,
         exclude_unset=False,
     )

@@ -29,8 +29,13 @@ setup_logging()
 
 @app.get("/")
 async def root():
-    # Health Check endpoint
     return "API is running!"
+
+
+@app.get("/health")
+async def health():
+    # Health Check endpoint
+    return {"status": "healthy"}
 
 
 app.include_router(auth.router)

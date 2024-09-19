@@ -1,23 +1,24 @@
-# Task Manager API (FastAPI-sync)
+# Task Manager API (FastAPI)
 
-This is the **FastAPI** implementation of the Task Manager API. This application handles user authentication and task management using **JWT tokens** with **stateless** authentication. Each user has control over their own tasks, ensuring that tasks remain private and secure.
+This is the **FastAPI** implementation of the Task Manager API.
 
 ## Features
 
-- **User Authentication**: JWT-based authentication with username and password.
+- **User Authentication**: JWT-based stateless authentication with email and password.
+- **Password Reset** : Users can reset their password via their email
 - **Task Management**: Users can create, view, update, and delete tasks. Each task is owned by a specific user and only accessible by them.
-- **SQLAlchemy ORM**: Handles database interactions.
-- **Alembic Migrations**: Manages database migrations.
-- **Pydantic Validation**: Used for data validation and serialization.
-- **Dockerized**: The entire app is containerized using Docker for easy setup and deployment.
+- **Task Categorization**: Users can create categories and sort their tasks
 
-## Requirements
+## Tech Stack
 
-- **Docker**: The app is fully containerized.
-- **FastAPI**: High-performance web framework.
-- **SQLAlchemy**: ORM for database interactions.
-- **Alembic**: Handles database migrations.
-- **Pydantic**: Used for validation and serialization.
+- **FastAPI**
+- **Pydantic**
+- **SQLAlchemy**
+- **Alembic**
+- **Docker**
+- **Async development**
+- **smtp4dev**
+- **pgadmin4**
 
 ## Installation and Setup
 
@@ -25,12 +26,12 @@ This is the **FastAPI** implementation of the Task Manager API. This application
 
 ```bash
 git clone https://github.com/Amirhossein-code/Task-Manager.git
-cd task-manager-api/fastapi-sync
+cd task-manager-api/fastapi
 ```
 
 ### 2. Set Up `.env` File Values
 
-We will create two environment files: `.env` and `.env.docker`.
+We will create two environment files: `.env` and `.env.docker`. because pydantic settings complains if there are env in .env but not in the classes fields so we create a new .env to bypass
 
 #### 1. **.env File**
 
@@ -38,20 +39,24 @@ This file contains the environment variables needed by your FastAPI application.
 
 ```text
 # Database connection
-DATABASE_URL=postgresql://<postgres_user>:<postgres_password>@db:<postgres_port>/<postgres_db>
+DATABASE_URL=postgresql+asyncpg://<postgres_user>:<postgres_pass>@db:5432/task_manager_db
 
 # Security settings
-SECRET_KEY=your_secret_key_here
+SECRET_KEY=bew_secret_key
 ALGORITHM=HS256
 
 # Token expiration
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+PASSWORD_RESET_TOKEN_EXPIRE_MINUTES=5
 
 # SQLAlchemy settings
 ECHO_SQL=True
 
-# Testing mode
-TEST=False
+# SMTP4DEV
+SMTP_SERVER=smtp4dev
+SMTP_PORT=25
+SENDER_EMAIL=noreply@example.com
+RESET_CALLBACK_URL=http://0.0.0.0:8000/reset-password
 ```
 
 #### 1. **.env.docker File**
@@ -60,9 +65,9 @@ This file is used by Docker services like PostgreSQL, PgAdmin, and SMTP4dev. The
 
 ```text
 # Database connection
-POSTGRES_DB=your_database_name
-POSTGRES_USER=your_postgres_user
-POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_DB=task_manager_db
+POSTGRES_USER=<postgres_user>
+POSTGRES_PASSWORD=<postgres_pass>
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 
@@ -90,25 +95,8 @@ docker compose up --build
 ### 4. Access the application:
 
 - FastAPI Swagger UI: `http://localhost:8000/docs`
-- pgAdmin: `http://localhost:5050` (Login with admin@example.com / admin)
-
-## Testing
-
-The project includes comprehensive integration tests using pytest, achieving over 90% test coverage. The remaining 10% of the code primarily covers logging and handling edge-case exceptions. These parts are designed to manage unexpected scenarios and ensure proper logging, though they don't directly impact the core business logic. Since these scenarios are challenging to reproduce in typical conditions, However, they are crucial for robust error handling and logging. Testing these components is possible if needed, but the primary focus remains on verifying core functionality.
-
-### Running the tests:
-
-#### 1. access the application container:
-
-```bash
-docker exec -it task_manager_app sh
-```
-
-#### 2. Run the tests:
-
-```bash
-pytest
-```
+- pgAdmin: `http://localhost:5050` (Login with admin@example.com / password)
+- smtp4dev: `http://localhost:3000` (Login with admin / password)
 
 ## Dev Experience
 

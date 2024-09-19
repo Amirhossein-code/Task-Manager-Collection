@@ -11,14 +11,15 @@ asyncpg = "*"
 alembic = "*"  
 python-dotenv = "*"  
 pyjwt = "*"  
-email-validator = "*"  
+aiosmtplib = "*"
 bcrypt = "4.0.1"  
 passlib = "*"  
 pydantic-settings = "*"  
-pytz = "*"  
-pytest = "*"  
+email-validator = "*"
 python-multipart = "*"  
-httpx = "*" 
-aiosmtplib = "*"
+pytz = "*"  
 
 [dev-packages]
+
+[requires]
+python_version = "3.12"
