@@ -24,7 +24,7 @@ async def authenticate_user(db: AsyncSession, email: EmailStr, password: str):
     return user
 
 
-async def create_access_token(data: dict) -> str:
+def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=int(settings.access_token_expire_minutes)
@@ -38,7 +38,7 @@ async def create_access_token(data: dict) -> str:
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    db: AsyncSession = Depends(get_db_session),
+    db: Annotated[AsyncSession, Depends(get_db_session)],
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

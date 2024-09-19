@@ -1,11 +1,12 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from core.database import sessionmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import auth, tasks, users
 
+from .core.database import sessionmanager
 from .core.logging import setup_logging
 
 
@@ -20,7 +21,7 @@ async def lifespan(app: FastAPI):
         await sessionmanager.close()
 
 
-app = FastAPI(lifespan=lifespan, title="Task manager", docs_url="/api/docs")
+app = FastAPI(lifespan=lifespan, title="Task manager")
 
 
 setup_logging()
@@ -34,6 +35,14 @@ async def root():
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(tasks.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)

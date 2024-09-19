@@ -1,4 +1,5 @@
 import logging
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -23,8 +24,8 @@ router = APIRouter(
     "/token", response_model=token_schema.Token, status_code=status.HTTP_200_OK
 )
 async def login_for_access_token(
-    request: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(get_db_session),
+    request: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Annotated[AsyncSession, Depends(get_db_session)],
 ):
     user = await authentication.authenticate_user(
         db, request.username, request.password
@@ -35,7 +36,7 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = await authentication.create_access_token(
+    access_token = authentication.create_access_token(
         data={
             "sub": user.email,
         }
@@ -46,7 +47,7 @@ async def login_for_access_token(
 @router.post("/request-reset-password")
 async def request_reset_password(
     request: token_schema.RequestResetPassword,
-    db: AsyncSession = Depends(get_db_session),
+    db: Annotated[AsyncSession, Depends(get_db_session)],
 ):
     user = await user_crud.get_user_by_email_or_404(email=request.email, db=db)
 
@@ -68,8 +69,8 @@ async def request_reset_password(
 @router.post("/reset-password")
 async def reset_password(
     request: token_schema.ResetPassword,
+    db: Annotated[AsyncSession, Depends(get_db_session)],
     password_reset_token: str = Query(...),
-    db: AsyncSession = Depends(get_db_session),
 ):
     reset_token = await auth_db.retrieve_password_reset_token(password_reset_token, db)
     if not reset_token:

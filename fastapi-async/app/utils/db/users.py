@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from ...models import User
 from ...schemas import users as user_schemas
@@ -8,7 +9,9 @@ from ..auth.hashing import Hash
 
 
 async def get_user_by_email(email: EmailStr, db: AsyncSession) -> User:
-    user = await db.query(User).filter(User.email == email).first()
+    stmt = select(User).filter(User.email == email)
+    result = await db.execute(stmt)
+    user = result.scalars().first()
     return user
 
 
@@ -22,7 +25,10 @@ async def get_user_by_email_or_404(email: EmailStr, db: AsyncSession) -> User:
 
 
 async def get_user_by_id_or_404(user_id: int, db: AsyncSession) -> User:
-    user = await db.query(User).filter(User.id == user_id).first()
+    stmt = select(User).filter(User.id == user_id)
+    result = await db.execute(stmt)
+    user = result.scalars().first()
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
