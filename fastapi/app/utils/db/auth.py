@@ -36,7 +36,7 @@ async def retrieve_password_reset_token(
     # Check if there is a token with the given token string
     if not reset_token:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Token Not Found"
         )
 
     return reset_token

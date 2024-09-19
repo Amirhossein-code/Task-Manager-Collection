@@ -117,3 +117,17 @@ async def update_task(
 async def delete_task(task: TaskDBModel, db: AsyncSession) -> None:
     await db.delete(task)
     await db.commit()
+
+
+async def verify_task_ownership(
+    user_id: int, task_id: int, db: AsyncSession
+) -> TaskDBModel:
+    task = await get_task_by_id_or_404(task_id=task_id, db=db)
+
+    if task.owner_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this task",
+        )
+
+    return task
