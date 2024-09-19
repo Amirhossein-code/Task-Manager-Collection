@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, tasks, users
+from app.api import auth, tasks, users, categories
 
 from .core.database import sessionmanager
 from .core.logging import setup_logging
@@ -35,6 +35,7 @@ async def root():
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(tasks.router)
+app.include_router(categories.router)
 
 app.add_middleware(
     CORSMiddleware,

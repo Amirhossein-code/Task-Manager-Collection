@@ -2,17 +2,16 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from ...models import Category as CategoryDBModel
-from ...models import User as UserDBModel
-from ...schemas import category as category_schemas
+from ...models import Category as CategoryDBModel, User as UserDBModel
+from ...schemas import categories as category_schemas
 
 
 async def create_category(
-    data: category_schemas.CategoryCreate,
+    request: category_schemas.CategoryCreateUpdate,
     user: UserDBModel,
     db: AsyncSession,
 ) -> CategoryDBModel:
-    category_data = data.model_dump()
+    category_data = request.model_dump()
     category = CategoryDBModel(**category_data, owner_id=user.id)
 
     db.add(category)
@@ -50,11 +49,10 @@ async def get_user_categories(
 
 async def update_category(
     category: CategoryDBModel,
-    update_data: category_schemas.Category,
+    update_data: category_schemas.CategoryCreateUpdate,
     db: AsyncSession,
-    full_update: bool = False,  # True for PUT, False for PATCH
 ) -> CategoryDBModel:
-    data_to_update = update_data.model_dump(exclude_unset=not full_update)
+    data_to_update = update_data.model_dump()
 
     for key, value in data_to_update.items():
         setattr(category, key, value)

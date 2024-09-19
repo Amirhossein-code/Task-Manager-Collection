@@ -18,6 +18,7 @@ class Task(BaseModel):
     description: str | None = None
     status: TaskStatus
     priority: TaskPriority
+    category_id: int
     start_time: datetime | None = None
     finish_time: datetime | None = None
 
@@ -35,6 +36,7 @@ class TaskCreate(BaseModel):
     description: str | None = None
     status: TaskStatus = TaskStatus.PENDING
     priority: TaskPriority = TaskPriority.LOW
+    category_id: int
     start_time: datetime | None = None
     finish_time: datetime | None = None
 
@@ -72,6 +74,7 @@ class TaskUpdate(BaseModel):
     description: str | None = None
     status: TaskStatus | None = TaskStatus.PENDING
     priority: TaskPriority | None = TaskPriority.LOW
+    category_id: int | None = None
     start_time: datetime | None = None
     finish_time: datetime | None = None
 
