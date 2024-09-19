@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from ...models import PasswordResetTokenDBModel
-from ...core.config import settings
+from ...models import PasswordResetToken as PasswordResetTokenDBModel
 
 
 async def create_password_reset_token(user_id: int, db: AsyncSession) -> str:
@@ -14,14 +13,12 @@ async def create_password_reset_token(user_id: int, db: AsyncSession) -> str:
     token = str(uuid4())
 
     # Create desired time for password reset token expiry
-    now = datetime.now(timezone.utc)
-    expire_time = now + timedelta(minutes=settings.password_reset_token_expire_minutes)
-    expires_at = expire_time.isoformat().replace("+00:00", "Z")
+    # now = datetime.now(timezone.utc)
+    # expire_time = now + timedelta(minutes=settings.password_reset_token_expire_minutes)
+    # expires_at = expire_time.isoformat().replace("+00:00", "Z")
 
     # Prep the data for a new password reset token instance
-    reset_token = PasswordResetTokenDBModel(
-        token=token, user_id=user_id, expires_at=expires_at
-    )
+    reset_token = PasswordResetTokenDBModel(token=token, user_id=user_id)
 
     db.add(reset_token)
     await db.commit()

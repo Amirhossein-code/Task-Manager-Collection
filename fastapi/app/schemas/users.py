@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from ..utils.auth.password_validators import ValidatedPassword

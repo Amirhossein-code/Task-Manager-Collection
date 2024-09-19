@@ -42,12 +42,20 @@ class TaskCreate(BaseModel):
 
     @field_validator("status")
     def validate_status(cls, status: TaskStatus):
+        """
+        Validate the status of the task upon creation.
+        The status cannot be 'DONE' at the time of creation.
+        """
         if status == TaskStatus.DONE:
             raise ValueError("status cannot be Done at creation.")
         return status
 
     @field_validator("start_time")
     def validate_start_time(cls, start_time):
+        """
+        Validate the start time of the task.
+        It must be greater than the current time (with a tolerance of 2 minutes).
+        """
         if start_time is not None:
             last_acceptable_submit_time = datetime.now(timezone.utc) - timedelta(
                 minutes=2
@@ -61,6 +69,10 @@ class TaskCreate(BaseModel):
 
     @model_validator(mode="after")
     def validate_time_range(cls, instance):
+        """
+        Validate the relationship between start_time and finish_time.
+        Finish time must be greater than start time if both are provided.
+        """
         if instance.start_time and instance.finish_time:
             if instance.start_time >= instance.finish_time:
                 raise ValueError("finish_time must be greater than start_time")
@@ -80,6 +92,10 @@ class TaskUpdate(BaseModel):
 
     @field_validator("start_time")
     def validate_start_time(cls, start_time):
+        """
+        Validate the start time of the task during an update.
+        It must be greater than the current time (with a tolerance of 2 minutes).
+        """
         if start_time is not None:
             last_acceptable_submit_time = datetime.now(timezone.utc) - timedelta(
                 minutes=2
@@ -93,6 +109,10 @@ class TaskUpdate(BaseModel):
 
     @model_validator(mode="after")
     def validate_time_range(cls, instance):
+        """
+        Validate the relationship between start_time and finish_time during an update.
+        Finish time must be greater than start time if both are provided.
+        """
         if instance.start_time and instance.finish_time:
             if instance.start_time >= instance.finish_time:
                 raise ValueError("finish_time must be greater than start_time")

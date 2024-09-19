@@ -64,6 +64,6 @@ sessionmanager = DatabaseSessionManager(
 
 
 async def get_db_session():
-    """Dependency function to retrieve a database session."""
+    """Dependency function to retrieve an async database session."""
     async with sessionmanager.session() as session:
         yield session

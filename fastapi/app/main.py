@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
+
+from app.api import auth, categories, tasks, users
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from app.api import auth, tasks, users, categories
 
 from .core.database import sessionmanager
 from .core.logging import setup_logging
@@ -29,6 +29,7 @@ setup_logging()
 
 @app.get("/")
 async def root():
+    # Health Check endpoint
     return "API is running!"
 
 

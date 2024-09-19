@@ -3,11 +3,14 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_url: str = Field(...)
+    # fastapi
     secret_key: str = Field(...)
     algorithm: str = Field(...)
     access_token_expire_minutes: int = Field(30)
     password_reset_token_expire_minutes: int = Field(5)
+
+    # DataBase
+    database_url: str = Field(...)
     echo_sql: bool = Field(True)
 
     # SMTP

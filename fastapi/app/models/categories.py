@@ -22,9 +22,12 @@ class Category(Base):
     time_created = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     time_updated = Column(DateTime(timezone=True), onupdate=datetime.now(timezone.utc))
 
+    # Task Model Relationship | A category can have many tasks (1 to Many relationship)
     tasks = relationship(
         "Task", back_populates="category", cascade="all, delete-orphan"
     )
+
+    # User model relation ships | Users can create many categories (1 to Many relationship)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="categories")
 
