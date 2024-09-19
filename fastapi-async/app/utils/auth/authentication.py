@@ -8,8 +8,9 @@ from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...core.config import settings
-from ...core.security import oauth2_scheme
 from ...core.database import get_db_session
+from ...core.security import oauth2_scheme
+from ...models import User as UserDBModel
 from ...schemas import token as token_schema
 from ...utils.auth.hashing import Hash
 from ...utils.db import users as user_crud
@@ -39,7 +40,7 @@ def create_access_token(data: dict) -> str:
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Annotated[AsyncSession, Depends(get_db_session)],
-):
+) -> UserDBModel:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
