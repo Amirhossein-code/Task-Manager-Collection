@@ -16,6 +16,6 @@ The Django (DRF) implementation offers a straightforward approach to building we
 
 ### 2. FastAPI (Synchronous)
 
-**[FastAPI](fastapi-sync/README.md)**
+**[FastAPI](fastapi/README.md)**
 
 The FastAPI implementation provides a modern, efficient way to build web APIs. It highlights FastAPI’s intuitive routing, dependency injection, and asynchronous capabilities. With SQLAlchemy for database management, this implementation demonstrates how to create a clear and performant API. It showcases FastAPI’s strengths in handling tasks and users while keeping the setup simple and focused on essential features.
