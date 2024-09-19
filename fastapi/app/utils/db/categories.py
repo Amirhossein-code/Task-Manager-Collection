@@ -17,6 +17,7 @@ async def create_category(
     db.add(category)
     await db.commit()
     await db.refresh(category)
+
     return category
 
 
@@ -24,6 +25,7 @@ async def get_category_by_id(category_id: int, db: AsyncSession) -> CategoryDBMo
     stmt = select(CategoryDBModel).filter(CategoryDBModel.id == category_id)
     result = await db.execute(stmt)
     category = result.scalars().one_or_none()
+
     return category
 
 
@@ -31,10 +33,12 @@ async def get_category_by_id_or_404(
     category_id: int, db: AsyncSession
 ) -> CategoryDBModel:
     category = await get_category_by_id(category_id=category_id, db=db)
+
     if not category:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
+
     return category
 
 
@@ -44,6 +48,7 @@ async def get_user_categories(
     stmt = select(CategoryDBModel).filter(CategoryDBModel.owner_id == user.id)
     result = await db.execute(stmt)
     categories = result.scalars().all()
+
     return categories
 
 
@@ -52,6 +57,7 @@ async def update_category(
     update_data: category_schemas.CategoryCreateUpdate,
     db: AsyncSession,
 ) -> CategoryDBModel:
+    # Creates a dictionary representation of a category data (Pydantic model instance)
     data_to_update = update_data.model_dump()
 
     for key, value in data_to_update.items():
@@ -59,6 +65,7 @@ async def update_category(
 
     await db.commit()
     await db.refresh(category)
+
     return category
 
 

@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     secret_key: str = Field(...)
     algorithm: str = Field(...)
     access_token_expire_minutes: int = Field(30)
+    password_reset_token_expire_minutes: int = Field(5)
     echo_sql: bool = Field(True)
-    test: bool = Field(False)
 
     # SMTP
     smtp_server: str = Field(...)

@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 async def send_reset_email(to_email: str, token: str) -> dict:
+    """
+    aiosmtplib is used so we can send email asynchronously
+    """
+
     subject = "Password Reset Request"
     body = f"Click the link to reset your password: {settings.reset_callback_url}?token={token}"
 

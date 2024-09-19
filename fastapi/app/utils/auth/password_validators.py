@@ -40,6 +40,8 @@ def check_special_char(v: str) -> str:
     return v
 
 
+# Custom pydantic validator for Ensuring that the password have
+# a matching format for enhanced security
 ValidatedPassword = Annotated[
     str,
     AfterValidator(check_min_length),
