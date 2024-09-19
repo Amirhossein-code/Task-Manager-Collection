@@ -54,7 +54,7 @@ async def request_reset_password(
     token = await auth_db.create_password_reset_token(user_id=user.id, db=db)
 
     try:
-        message = await send_reset_email(to_email=request.email, token=token)
+        await send_reset_email(to_email=request.email, token=token)
     except Exception as e:
         logger.error(f"Failed to send email to {request.email}: {e}", exc_info=True)
 
@@ -63,7 +63,7 @@ async def request_reset_password(
             detail="Failed to send password reset email.",
         )
 
-    return message
+    return {"message" : "Email Sent Successfully"}
 
 
 @router.post("/reset-password")

@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from ...models import PasswordResetToken
 
 
@@ -18,13 +19,15 @@ async def create_password_reset_token(user_id: int, db: AsyncSession):
         token=token, user_id=user_id, expires_at=expires_at
     )
 
-    await db.add(reset_token)
+    db.add(reset_token)
     await db.commit()
     return token
 
 
 async def retrieve_password_reset_token(token: str, db: AsyncSession):
-    reset_token = await db.query(PasswordResetToken).filter_by(token=token).first()
+    stmt = select(PasswordResetToken).filter_by(token=token)
+    result = await db.execute(stmt)
+    reset_token = result.scalars().one_or_none()
 
     if not reset_token:
         raise HTTPException(

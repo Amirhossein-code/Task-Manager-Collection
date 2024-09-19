@@ -2,14 +2,17 @@ from typing import List
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 from ...models import Task, User
 from ...schemas import tasks as task_schemas
 
 
 async def get_task_by_id(task_id: int, db: AsyncSession) -> Task:
-    user = await db.query(Task).filter(Task.id == task_id).first()
-    return user
+    stmt = select(Task).filter(Task.id == task_id)
+    result = await db.execute(stmt)
+    task = result.scalars().one_or_none()
+    return task
 
 
 async def get_task_by_id_or_404(task_id: int, db: AsyncSession) -> Task:
@@ -22,7 +25,9 @@ async def get_task_by_id_or_404(task_id: int, db: AsyncSession) -> Task:
 
 
 async def get_user_tasks(user: User, db: AsyncSession) -> List[Task]:
-    tasks = await db.query(Task).filter(Task.owner_id == user.id).all()
+    stmt = select(Task).filter(Task.owner_id == user.id)
+    result = await db.execute(stmt)
+    tasks = result.scalars().all()
     return tasks
 
 
@@ -48,9 +53,17 @@ async def update_task(
 
     for key, value in data_to_update.items():
         setattr(task, key, value)
+    try:
+        # This line triggers event listener so the exception is handled correctly
+        await db.flush()
 
-    await db.commit()
-    await db.refresh(task)
+        await db.commit()
+        await db.refresh(task)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error updating task: {str(e)}",
+        )
     return task
 
 
