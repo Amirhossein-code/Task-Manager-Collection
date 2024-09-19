@@ -87,13 +87,17 @@ async def put_update_task(
         task=task,
         update_data=update_task_data,
         db=db,
-        full_update=False,
+        full_update=True,
     )
 
     return updated_task
 
 
-@router.patch("/{task_id}", response_model=task_schemas.Task)
+@router.patch(
+    "/{task_id}",
+    response_model=task_schemas.Task,
+    status_code=status.HTTP_200_OK,
+)
 async def patch_update_task(
     user: Annotated[
         user_schemas.UserDisplay, Depends(get_current_active_user_db_dependency)
@@ -107,7 +111,7 @@ async def patch_update_task(
     if task.owner_id != user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to delete this task",
+            detail="Not authorized to Update this task",
         )
 
     updated_task = await task_crud.update_task(
