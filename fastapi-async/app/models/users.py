@@ -32,6 +32,7 @@ class User(Base):
     UniqueConstraint("email", name="uq_user_email")
 
     tasks = relationship("Task", back_populates="owner")
+    categories = relationship("Category", back_populates="owner")
     password_reset_tokens = relationship("PasswordResetToken", back_populates="user")
 
     def __repr__(self):
