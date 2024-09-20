@@ -2,20 +2,27 @@
 
 ## Description
 
-This repository explores how to build a basic task management API using different frameworks. It focuses on implementing core features to provide a clear view of how these are handled across various technologies.
+This repository is a simple guide to building a Task Manager API using a variety of web frameworks. It's designed for developers who want to experiment with different technologies while keeping things approachable. Each implementation focuses on the basics, without overwhelming you with unnecessary complexity.
 
-The implementations are designed to be simple and approachable, rather than exhaustive. The goal is to provide a minimal, functional API with JWT-based authentication and basic user and task management, allowing developers to understand the essentials of each framework without unnecessary complexity.
+By comparing these implementations, you'll get a good sense of how common tasks like user authentication and task management are handled differently in various frameworks. The idea is to learn by doing!
 
 ## Implementations
 
-### 1. Django (DRF)
+### **[1. Django (DRF)](django-drf/README.md)**
 
-**[Django (DRF)](django-drf/README.md)**
+The FastAPI implementation focuses on performance and simplicity. It utilizes Python's async capabilities and type hints to create a high-performance API with minimal code. This implementation showcases how FastAPI’s asynchronous nature allows for efficient handling of concurrent tasks, making it ideal for scalable applications.
 
-The Django (DRF) implementation offers a straightforward approach to building web APIs with Django and the Django REST Framework. It utilizes Django’s built-in features, such as automatic authentication and the admin panel, to create a functional API with minimal setup. This implementation highlights how to leverage Django’s rich ecosystem to build a basic task management system efficiently.
+### **[2. FastAPI](fastapi/README.md)**
 
-### 2. FastAPI (Synchronous)
+The FastAPI implementation focuses on performance and simplicity. It utilizes Python's async capabilities and type hints to create a high-performance API with minimal code. This implementation showcases how FastAPI’s asynchronous nature allows for efficient handling of concurrent tasks, making it ideal for scalable applications.
 
-**[FastAPI](fastapi/README.md)**
+## Minimal Task Manager API
 
-The FastAPI implementation provides a modern, efficient way to build web APIs. It highlights FastAPI’s intuitive routing, dependency injection, and asynchronous capabilities. With SQLAlchemy for database management, this implementation demonstrates how to create a clear and performant API. It showcases FastAPI’s strengths in handling tasks and users while keeping the setup simple and focused on essential features.
+Each implementation of the Task Manager API includes the following core features:
+
+- **User Authentication:** Secure login, registration, and token-based authentication (JWT).
+- **Task Management:** CRUD (Create, Read, Update, Delete) operations for tasks, allowing users to manage their tasks.
+- **Task Categorization:** Ability for users to organize tasks by assigning them to categories.
+- **Password Reset:** Users should be able to reset their passwords via email (using smtp4dev for development).
+- **PostgreSQL:** The database for persistent storage of users, tasks, and categories.
+- **Dockerized Deployment:** The entire application is containerized using Docker, ensuring a consistent and reproducible development and production environment.
