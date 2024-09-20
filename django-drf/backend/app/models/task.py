@@ -47,7 +47,7 @@ class Task(models.Model):
 
     category = models.ForeignKey(
         Category,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

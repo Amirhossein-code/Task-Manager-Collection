@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Individual
 
 
@@ -29,7 +30,6 @@ class IndividualSerializer(serializers.ModelSerializer):
             "last_updated",
         ]
         read_only_fields = [
-            "id",
             "email",
             "joined_at",
             "last_updated",

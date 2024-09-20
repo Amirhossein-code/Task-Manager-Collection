@@ -5,9 +5,7 @@ from .models import Task, Category
 
 class TaskFilter(django_filters.FilterSet):
     category = filters.CharFilter(field_name="category__title", lookup_expr="icontains")
-
     priority = filters.ChoiceFilter(choices=Task.PRIORITY_CHOICES)
-
     status = filters.ChoiceFilter(choices=Task.STATUS_CHOICES)
 
     class Meta:

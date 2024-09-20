@@ -1,8 +1,6 @@
-# Task Manager API
+# Task Manager API (Django)
 
-### 🔺 Description
-
-This is the **Django (DRF)** implementation of the Task Manager API, designed for efficient task management with robust features.
+This is the **Django (DRF)** implementation of the Task Manager API.
 
 ### ⚙️ Tech Stack Used
 
@@ -12,7 +10,7 @@ This is the **Django (DRF)** implementation of the Task Manager API, designed fo
 - Docker
 - smtp4dev
 
-## Development Experience
+## 🔺Development Experience
 
 Working on the Task Manager API with Django and DRF was a rewarding journey, especially for those venturing into web development. Django, known for its "batteries-included" philosophy, offers a rich set of built-in features that make development smoother and more intuitive. The admin panel, in particular, simplifies data management and user administration, providing a great starting point for any project.
 

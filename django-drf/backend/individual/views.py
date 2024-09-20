@@ -11,9 +11,6 @@ from .serializers import (
     UpdateIndividualSerializer,
 )
 
-# Delete and Created methods have been blocked.
-# Creation of the individual is handled by the system
-
 
 class IndividualViewSet(
     mixins.RetrieveModelMixin,
@@ -21,6 +18,8 @@ class IndividualViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
+    # Delete and Created methods have been blocked.
+    # Creation of the individual is handled by the system
     serializer_class = IndividualSerializer
     permission_classes = [IsAuthenticated, IsProfileOwner]
 

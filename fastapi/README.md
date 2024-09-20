@@ -1,8 +1,8 @@
-# Task Manager API
+# Task Manager API (FastAPI)
 
 This is the **FastAPI** implementation of the Task Manager API
 
-## Tech Stack
+## ⚙️ Tech Stack
 
 - **FastAPI**: Asynchronous web framework for building APIs with Python.
 - **Pydantic**: For data validation and settings management.
@@ -12,7 +12,7 @@ This is the **FastAPI** implementation of the Task Manager API
 - **Docker**: For containerizing the application.
 - **smtp4dev**: For email testing during development.
 
-## Development Experience
+## 🔺 Development Experience
 
 Working on the Task Manager API with FastAPI was both rewarding and refreshing, especially transitioning from Django/DRF. FastAPI’s flexibility provided a new approach, with its more minimalistic structure offering a contrast to Django’s built-in features.
 
@@ -22,7 +22,7 @@ FastAPI's async support made it effortless to handle concurrent requests, signif
 
 Overall, FastAPI proved to be lightweight, fast, and highly suited for building modern APIs that are easy to maintain and scale.
 
-## Installation and Setup
+## 📦 Installation and Setup
 
 ### 1. Clone the repository:
 
